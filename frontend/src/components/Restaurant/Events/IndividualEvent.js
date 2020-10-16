@@ -28,7 +28,7 @@ export class IndividualEvent extends Component {
         return (
             <div>
                 <div className="container pt-5" >
-                    <div className="row" style={ { "padding": "10px", "background": "whitesmoke" } }>
+                    <div className="row" style={ { "padding": "10px", "background": "whitesmoke", "box-shadow": "0px 0px 10px gray" } }>
                         <div className="col-9">
                             <div className="row">
 

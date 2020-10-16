@@ -84,9 +84,9 @@ export class Dashboard extends Component {
 
             <div>
                 <div className="row">
-                    <div className="col-3"></div>
+                    <div className="col-2"></div>
                     <div className="col-6 m-4">
-                        <input type="text" style={ { "width": "700px" } } name="searchInput" onChange={ this.handleSearch } placeholder="Search Restaurants"></input>
+                        <input type="text" style={ { "width": "700px", "height": "30px", "border": "1px solid gray", "box-shadow": "0px 0px 10px gray" } } name="searchInput" onChange={ this.handleSearch } placeholder="     Search Restaurants"></input>
                     </div>
                     <div className="col-3"></div>
 
@@ -103,7 +103,7 @@ export class Dashboard extends Component {
                     <div className="col-7">
                         { restaurants }
                     </div>
-                    <div className="col-3">
+                    <div className="col-3" >
                         { displayMap }
                     </div>
 

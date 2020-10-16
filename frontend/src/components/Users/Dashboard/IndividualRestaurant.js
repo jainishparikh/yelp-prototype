@@ -28,12 +28,12 @@ export class IndividualRestaurant extends Component {
     render () {
         return (
             <div style={ { "padding-top": "20px" } }>
-                <div className="row" style={ { "width": "100%", "height": "180px", "background": "whitesmoke" } }>
-                    <div className="col-4" style={ { "padding-left": "0px" } }>
+                <div className="row" style={ { "width": "100%", "height": "180px", "background": "whitesmoke", "box-shadow": "0px 0px 10px gray" } }>
+                    <div className="col-4" style={ { "padding": "0px" } }>
                         { this.displayPicture( this.props.restaurantData.profilePicture ) }
                     </div>
                     <div className='col-6'>
-                        <ul style={ { "list-style-type": "none", "paddinf-left": "0px" } }>
+                        <ul style={ { "list-style-type": "none", "padding": "5px" } }>
                             <li><h3>{ this.props.restaurantData.name }</h3></li>
                             <li>{ this.props.restaurantData.location }</li>
                             <li>{ this.props.restaurantData.restaurantType }</li>
@@ -42,7 +42,7 @@ export class IndividualRestaurant extends Component {
                         </ul>
 
                     </div>
-                    <div className="col-2">
+                    <div className="col-2" style={ { "padding": "5px" } }>
                         <Link className="btn btn-danger" to={ `/users/restaurantprofiles/${ this.props.restaurantData.email }/${ this.props.restaurantData.restaurantID }` } >
                             View Restaurant
                     </Link>

@@ -74,7 +74,7 @@ export class RestaurantAbout extends Component {
 
             var dishImagePath = BACKEND_URL + "/images/dishes/" + dish.dishPicture
             return (
-                <img src={ dishImagePath } style={ { "margin": "10px" } } width="200px" height="90%" alt="" />
+                <img src={ dishImagePath } style={ { "margin": "5px", "box-shadow": "0px 0px 10px gray" } } width="250px" height="95%" alt="" />
             )
         } )
 

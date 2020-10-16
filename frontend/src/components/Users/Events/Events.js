@@ -91,10 +91,10 @@ export class Events extends Component {
                 <div className="container-fluid m-1" style={ { height: "100vh" } }>
                     <div className="row">
                         <div className="col-8">
-                            <div className="row mt-2">
+                            <div className="row m-3">
                                 <div className="col-4"></div>
                                 <div className="col-4">
-                                    <input type="text" size="50" name="searchInput" onChange={ this.handleSearch } placeholder="Search Event by Name"></input>
+                                    <input type="text" style={ { "width": "400px", "height": "30px", "border": "1px solid gray", "box-shadow": "0px 0px 10px gray" } } name="searchInput" onChange={ this.handleSearch } placeholder="Search Event by Name"></input>
                                 </div>
                                 <div className="col-4"></div>
 
@@ -107,8 +107,11 @@ export class Events extends Component {
 
                             </div>
                         </div>
-                        <div className="col-4" style={ { "padding": "0 15px", "border-left": "1px solid #e6e6e6" } }>
-                            <div className="row" style={ { "padding": "0 15px" } }><h3>Registered Events</h3></div>
+                        <div className="col-4" style={ { "padding": "0px 15px", "border-left": "1px solid #e6e6e6" } }>
+                            <div className="row m-2" style={ { "padding": "15px" } }>
+                                <h4>Registered Events</h4>
+
+                            </div>
                             <div className="row" style={ { "padding": "0 15px" } }>
                                 { registeredEvents }
                             </div>

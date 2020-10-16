@@ -84,26 +84,26 @@ export class IndividualOrder extends Component {
 
 
         return (
-            <div style={ { "padding-top": "20px" } }>
-                <div className="row  m-2" style={ { "paddingRight": "15px", "width": "100%", "height": "200px", "background": "whitesmoke" } }>
-                    <div className="col-3" style={ { "padding": "0px" } }>
+            <div style={ { "padding": "20px" } }>
+                <div className="row  m-2" style={ { "paddingRight": "15px", "width": "100%", "height": "200px", "background": "whitesmoke", "box-shadow": "0px 0px 10px gray" } }>
+                    <div className="col-2" style={ { "padding": "0px" } }>
                         { this.displayPicture( this.state.restaurantData.profilePicture ) }
                     </div>
                     <div className='col-3'>
 
-                        <ul style={ { "list-style-type": "none", "paddingLeft": "0px" } }>
+                        <ul style={ { "list-style-type": "none", "paddingLeft": "10px" } }>
                             <li><h2>{ this.state.restaurantData.name }</h2></li>
-                            <li>{ this.state.restaurantData.description }</li>
-                            <li>{ this.state.restaurantData.location }</li>
-                            <li>{ this.state.restaurantData.contact }</li>
+                            <li>{ this.state.restaurantData.description }&nbsp;</li>
+                            <li>{ this.state.restaurantData.location }&nbsp;</li>
+                            <li>{ this.state.restaurantData.contact }&nbsp;</li>
 
 
                         </ul>
 
                     </div>
-                    <div className='col-3'>
+                    <div className='col-3' >
 
-                        <ul style={ { "list-style-type": "none", "paddingLeft": "0px" } }>
+                        <ul style={ { "list-style-type": "none", "padding": "0px" } }>
                             <li><h6>Placed On:</h6></li>
                             <li><h6>Date:</h6></li>
                             <li>{ date }</li>

@@ -23,7 +23,7 @@ export class IndividualDish extends Component {
 
         return (
             <div style={ { "padding-top": "20px" } }>
-                <div style={ { "background": "whitesmoke", "padding-left": "10px" } }>
+                <div style={ { "background": "whitesmoke", "padding-left": "10px", "box-shadow": "0px 0px 10px gray" } }>
                     <div className="row">
                         <div className="col-8"><h5>Headline:</h5> { this.props.reviewData.headline }</div>
                         <div className="col-4">{ this.props.reviewData.date }</div>

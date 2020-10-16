@@ -83,7 +83,7 @@ export class IndividualOrder extends Component {
 
         return (
 
-            <img src={ dishImagePath } width="200px" height="185px" alt="" />
+            <img src={ dishImagePath } width="200px" height="200px" alt="" />
 
         )
     }
@@ -130,11 +130,11 @@ export class IndividualOrder extends Component {
         }
         return (
             <div style={ { "padding-top": "20px" } }>
-                <div className="row  m-2" style={ { "width": "100%", "height": "190px", "background": "whitesmoke" } }>
+                <div className="row  m-2" style={ { "width": "100%", "height": "200px", "background": "whitesmoke", "box-shadow": "0px 0px 10px gray" } }>
                     <div className="col-3" style={ { "padding": "0px" } }>
                         { this.displayPicture( this.state.userData.profilePicture ) }
                     </div>
-                    <div className='col-3'>
+                    <div className='col-3' style={ { "padding": "10px" } }>
 
                         <ul style={ { "list-style-type": "none", "padding-left": "0px" } }>
                             <li><h2>{ this.state.userData.name }</h2></li>
@@ -146,7 +146,7 @@ export class IndividualOrder extends Component {
                         </ul>
 
                     </div>
-                    <div className="col-4" style={ { "padding-right": "0px" } }>
+                    <div className="col-4" style={ { "padding": "10px" } }>
                         <ul style={ { "list-style-type": "none" } }>
                             <li><h6>OrderID:</h6>{ this.props.orderData._id }</li>
                             <li><h5>Order Status:</h5></li>
@@ -159,7 +159,7 @@ export class IndividualOrder extends Component {
 
                         </ul>
                     </div>
-                    <div className="col-2" style={ { "padding-right": "0px" } }>
+                    <div className="col-2" style={ { "padding": "5px" } }>
                         <div className="row">
                             <Link className="btn btn-primary" to={ `/restaurants/userprofiles/${ this.state.userData.email }/${ this.props.orderData.userID }` } >
                                 View Profile

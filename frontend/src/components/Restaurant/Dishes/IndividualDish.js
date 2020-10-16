@@ -49,18 +49,18 @@ export class IndividualDish extends Component {
 
         return (
             <div>
-                <div className="row p-1 m-2" style={ { "width": "100%", "height": "200px", "background": "whitesmoke" } }>
-                    <div className="col-4">
+                <div className="row m-4" style={ { "width": "100%", "height": "180px", "background": "whitesmoke", "box-shadow": "0px 0px 10px gray" } }>
+                    <div className="col-4" style={ { "padding": "0px" } }>
                         { this.displayPicture( this.state.dishPicture ) }
                     </div>
-                    <div className='col-6'>
+                    <div className='col-6' style={ { "padding": "5px" } }>
                         <div className='row'><h3>{ this.state.dishName }</h3></div>
                         <div className='row'><b>Cost: </b>${ this.state.dishPrice }</div>
                         <div className='row'><b>Category: </b>{ this.state.dishCategory }</div>
                         <div className='row'><b>Ingrediants: </b>{ this.state.dishIngrediants }</div>
                         <div className='row'><b>Description: </b>{ this.state.dishDescription }</div>
                     </div>
-                    <div className="col-2">
+                    <div className="col-2" style={ { "padding": "5px" } }>
 
                         { dishOption }
                     </div>

@@ -27,7 +27,7 @@ export class Maps extends Component {
         } )
 
         return (
-            <div style={ { "marginTop": "20px", height: '70vh', width: '80%', "border": "1px solid gray" } }>
+            <div style={ { "marginTop": "20px", height: '70vh', width: '80%', "border": "1px solid gray", "box-shadow": "0px 0px 10px gray" } }>
                 <Map
                     google={ this.props.google }
                     zoom={ 9 }

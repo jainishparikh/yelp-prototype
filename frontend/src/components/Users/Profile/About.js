@@ -82,14 +82,14 @@ export class UserAbout extends Component {
                 { redirectVar }
                 <div className="container-fluid">
                     <div className="container-fluid" style={ { height: "100vh" } }>
-                        <div className="row mt-3 mb-3" style={ { height: "35%" } }>
+                        <div className="row mt-3 mb-3" style={ { height: "40%" } }>
                             {/* profile picture */ }
-                            <div className="col-2">
-                                <img src={ this.state.profileImagePath } width="100%" height="90%" alt="" />
+                            <div className="col-3">
+                                <img src={ this.state.profileImagePath } style={ { "box-shadow": "0px 0px 10px gray" } } width="100%" height="100%" alt="" />
                             </div>
                             {/* profile display */ }
                             <div className="col-8" >
-                                <div className="row pt-4" style={ { background: "whitesmoke" } }>
+                                <div className="row pt-4" style={ { "background": "whitesmoke", "box-shadow": "0px 0px 10px gray" } }>
                                     <div className="col-8">
                                         <ul style={ { "list-style-type": "none" } }>
                                             <li><h2>{ this.state.name }</h2></li>
@@ -125,7 +125,7 @@ export class UserAbout extends Component {
 
                         <div className="row" style={ { height: "60%" } }>
                             {/* edit-profile */ }
-                            <div className="col-2" style={ { "marginTop": "20px" } } >
+                            <div className="col-3" style={ { "marginTop": "20px" } } >
                                 <Link className="btn btn-primary" to={ {
                                     pathname: "/users/editprofile", state: {
                                         userData: this.state

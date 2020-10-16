@@ -4,7 +4,7 @@ export class RegisteredEvents extends Component {
     render () {
         return (
             <div>
-                <div className="container mt-2 pt-2 pb-2" style={ { "background": "whitesmoke" } } >
+                <div className="container  p-2 m-2" style={ { "width": "100%", "background": "whitesmoke", "box-shadow": "0px 0px 10px gray" } } >
                     <div className="row">
 
                         <div className="col-6">
@@ -15,7 +15,7 @@ export class RegisteredEvents extends Component {
                         </div>
                     </div>
                     <div className="row">
-                        <div className="col-6">
+                        <div className="col-6" style={ { 'color': "blue" } }>
                             { this.props.eventData.Hashtags }
                         </div>
                         <div className="col-6">
