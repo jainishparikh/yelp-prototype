@@ -53,6 +53,9 @@ export class Navbar extends Component {
                         <div class="collapse navbar-collapse" id="navbarNav">
                             <ul class="navbar-nav ml-auto">
                                 <li class="nav-item">
+                                    <Link class="nav-link" to="/restaurants/yelpusers" style={ { color: 'white' } }>Yelp Users</Link>
+                                </li>
+                                <li class="nav-item">
                                     <Link class="nav-link" to="/restaurants/reviews" style={ { color: 'white' } }>Reviews</Link>
                                 </li>
                                 <li class="nav-item">

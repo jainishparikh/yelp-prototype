@@ -19,6 +19,7 @@ import RestaurantReviews from "./Restaurant/Reviews/Reviews";
 import RestaurantEvents from "./Restaurant/Events/Events";
 import UserProfiles from "./Restaurant/Profile/UserProfile"
 import RestaurantOrders from './Restaurant/Orders/Orders';
+import YelpUsers from './Restaurant/Profile/YelpUsers';
 
 export class Main extends Component {
     render () {
@@ -43,6 +44,7 @@ export class Main extends Component {
                 <Route path='/restaurants/events' component={ RestaurantEvents } />
                 <Route path='/restaurants/userprofiles/:userEmail/:userID' component={ UserProfiles } />
                 <Route path='/restaurants/orders' component={ RestaurantOrders } />
+                <Route path='/restaurants/yelpusers' component={ YelpUsers } />
 
             </div>
         )

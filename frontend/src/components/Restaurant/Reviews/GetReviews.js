@@ -31,7 +31,7 @@ export class GetReviews extends Component {
         let displayReview = this.state.Reviews.map( review => {
             return (
 
-                <div style={ { "background": "whitesmoke", "padding-left": "10px", "marginTop": "10px" } }>
+                <div style={ { "background": "whitesmoke", "padding-left": "10px", "marginTop": "10px", "box-shadow": "0px 0px 10px gray" } }>
                     <div className="row">
                         <div className="col-4"><h2>{ review.restaurantName }</h2></div>
                         <div className="col-4">{ review.ratings }</div>

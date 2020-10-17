@@ -11,6 +11,7 @@ var dishesSchema = new Schema( {
     dishPicture: String,
 } )
 
+
 var restaurantsSchema = new Schema( {
     name: String,
     email: String,
@@ -23,7 +24,8 @@ var restaurantsSchema = new Schema( {
     latitude: Number,
     longitude: Number,
     profilePicture: String,
-    dishes: [ dishesSchema ]
+    dishes: [ dishesSchema ],
+    following: [ String ]
 
 }
     , { collection: 'restaurants' }

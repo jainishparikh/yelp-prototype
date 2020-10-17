@@ -300,5 +300,23 @@ router.put( '/dishes/withimage', ( req, res ) => {
 } );
 
 
+//follow user
+router.post( '/follow', checkAuth, ( req, res ) => {
+
+
+    restaurantsSchema.findByIdAndUpdate( { _id: req.body.restaurantID }
+        , { $push: { following: req.body.userID } }
+    ).then( doc => {
+        console.log( "User added to followinf", doc )
+        res.status( 200 ).send( doc );
+    } ).catch( error => {
+        console.log( "error", error );
+        res.status( 400 ).send( "Error following" );
+    } )
+
+
+} )
+
+
 
 module.exports = router;

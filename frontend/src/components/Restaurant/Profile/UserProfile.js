@@ -25,6 +25,7 @@ export class UserProfile extends Component {
             thingsILove: "",
             blogLink: "",
             profileImagePath: profile_picture,
+            following: false
         }
 
     }
@@ -42,7 +43,7 @@ export class UserProfile extends Component {
                     imagePath = profile_picture
                 }
                 this.setState( {
-                    userID: response.data.userID,
+                    userID: response.data._id,
                     name: response.data.name,
                     nickName: response.data.nickName,
                     email: response.data.email,
@@ -72,11 +73,38 @@ export class UserProfile extends Component {
     goBackTo = ( e ) => {
         window.history.go( -1 );
     }
+
+    followUser = () => {
+        console.log( "in follow user" )
+        axios.defaults.headers.common[ "authorization" ] = cookie.load( 'token' )
+        axios.defaults.withCredentials = true;
+        let data = {
+            restaurantID: cookie.load( 'id' ),
+            userID: this.state.userID
+        }
+        axios.post( BACKEND_URL + '/restaurants/follow/', data ).then( response => {
+            if ( response.status === 200 ) {
+                this.setState( {
+                    following: true
+                } )
+            }
+        } ).catch( error => {
+            console.log( "Error in following: ", error );
+        } )
+    }
+
     render () {
         var redirectVar = null;
         if ( !( cookie.load( "auth" ) && cookie.load( "type" ) === "restaurants" ) ) {
             redirectVar = <Redirect to="/login" />
         }
+        var displayFollow = null;
+        if ( this.state.following ) {
+            displayFollow = <button className="btn btn-danger">Already Following</button>
+        } else {
+            displayFollow = <button className="btn btn-danger" onClick={ this.followUser }>Follow</button>
+        }
+
 
         let displayReviews = <div className="col-8" style={ { "padding": "0 15px", "border-left": "1px solid #e6e6e6" } }>
             <GetReviews userID={ this.props.match.params.userID } />
@@ -87,18 +115,18 @@ export class UserProfile extends Component {
                 { redirectVar }
                 <div className="container-fluid">
                     <div className="container-fluid" style={ { height: "100vh" } }>
-                        <div className="row mt-2">
+                        <div className="row m-1">
                             {/* <Link className="btn btn-primary" to="/restaurants/events">Back to Events</Link> */ }
-                            <button className="btn btn-primary" onClick={ this.goBackTo }>Back</button>
+                            <button className="btn btn-danger" onClick={ this.goBackTo }>Back</button>
                         </div>
-                        <div className="row mt-3 mb-3" style={ { height: "30%", background: "whitesmoke" } }>
+                        <div className="row mt-3 mb-3" style={ { height: "30%" } }>
                             {/* profile picture */ }
                             <div className="col-2">
                                 <img src={ this.state.profileImagePath } width="102%" height="100%" alt="" />
                             </div>
                             {/* profile display */ }
-                            <div className="col-8" >
-                                <div className="row pt-4">
+                            <div className="col-8" style={ { "box-shadow": "0px 0px 10px gray", background: "whitesmoke" } }>
+                                <div className="row pt-4" >
                                     <div className="col-8">
                                         <table>
                                             <tbody>
@@ -138,7 +166,9 @@ export class UserProfile extends Component {
 
                         </div>
                         <div className="row">
-                            <div className="col-2"></div>
+                            <div className="col-2">
+                                { displayFollow }
+                            </div>
                             { displayReviews }
                         </div>
 

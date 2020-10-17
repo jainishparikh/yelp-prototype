@@ -76,6 +76,21 @@ router.post( '/login', ( req, res ) => {
 
 } );
 
+// get all users
+router.get( '/all', checkAuth, ( req, res ) => {
+    userSchema.find().then( docs => {
+
+        console.log( "Users", docs )
+        res.status( 200 ).send( JSON.stringify( docs ) )
+
+
+    } ).catch( error => {
+        console.log( "Error fetching users", error )
+        res.status( 400 ).send( "Error fetching users" )
+    } )
+
+} );
+
 //get user about by email
 router.get( '/about/:email', checkAuth, ( req, res ) => {
 
