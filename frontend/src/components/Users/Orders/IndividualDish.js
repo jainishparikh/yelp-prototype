@@ -29,7 +29,7 @@ export class IndividualDish extends Component {
         var dishImagePath = BACKEND_URL + "/images/dishes/" + name
         return (
 
-            <img src={ dishImagePath } width="200px" height="180px" alt="" />
+            <img src={ dishImagePath } width="200px" height="195px" alt="" />
 
         )
     }
@@ -51,7 +51,7 @@ export class IndividualDish extends Component {
     render () {
         let dishOption = null
         if ( this.state.addedToOrder === false ) {
-            dishOption = <div className="add-to-order" >
+            dishOption = <div className="add-to-order" style={ { "padding": "5px" } }>
                 <button onClick={ this.addToOrderIndividualDish } className="btn btn-danger">Add to Order</button>
             </div>
         } else {
@@ -63,11 +63,11 @@ export class IndividualDish extends Component {
 
         return (
             <div>
-                <div className="row p-1 m-3" style={ { "width": "100%", "height": "200px", "background": "whitesmoke" } }>
-                    <div className="col-4">
+                <div className="row p-1 m-3" style={ { "width": "100%", "height": "200px", "background": "whitesmoke", "box-shadow": "0px 0px 10px gray" } }>
+                    <div className="col-4" style={ { "padding": "0px" } }>
                         { this.displayPicture( this.state.dishPicture ) }
                     </div>
-                    <div className='col-6'>
+                    <div className='col-6' style={ { "padding": "5px" } }>
                         <div className='row'><h3>{ this.state.dishName }</h3></div>
                         <div className='row'><b>Cost: </b>${ this.state.dishPrice }</div>
                         <div className='row'><b>Category: </b>{ this.state.dishCategory }</div>

@@ -20,6 +20,7 @@
     "react-geocode": "^0.2.1",
     "react-modal": "^3.11.2",
     "react-native-geolocation-service": "^5.0.0",
+    "react-paginate": "^6.5.0",
     "react-router": "^5.2.0",
     "react-router-dom": "^5.2.0",
     "react-scripts": "3.4.3",

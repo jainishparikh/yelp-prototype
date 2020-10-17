@@ -4,6 +4,8 @@ import BACKEND_URL from '../../../config/config';
 import cookie from 'react-cookies';
 import IndividualOrder from './IndividualOrder';
 import { Redirect } from 'react-router';
+import '../../../css/pagination.css';
+import ReactPaginate from 'react-paginate';
 
 export class Orders extends Component {
     constructor( props ) {
@@ -11,6 +13,9 @@ export class Orders extends Component {
         this.state = {
             Orders: [],
             orderStatusFilter: "All",
+            offset: 0,
+            perPage: 2,
+            pageCount: 0
 
         }
     }
@@ -23,6 +28,7 @@ export class Orders extends Component {
                 response.data.map( order => {
                     this.setState( {
                         Orders: [ ...this.state.Orders, order ],
+                        pageCount: Math.ceil( response.data.length / this.state.perPage )
 
                     } )
                 } )
@@ -42,17 +48,26 @@ export class Orders extends Component {
         } )
     }
 
+    handlePageClick = ( e ) => {
+
+        this.setState( {
+            offset: this.state.perPage * e.selected,
+
+        } )
+
+    };
+
     render () {
         let redirectVar = null
+        let pageCount = this.state.pageCount
         if ( !( cookie.load( "auth" ) && cookie.load( "type" ) === "users" ) ) {
             redirectVar = <Redirect to="/login" />
         }
 
         let filteredOrders = this.state.Orders.filter( order => this.state.orderStatusFilter === "All" || order.orderStatus === this.state.orderStatusFilter )
-        console.log( "filtered", filteredOrders )
+        pageCount = Math.ceil( filteredOrders.length / this.state.perPage )
         let sortedOrders = filteredOrders.sort( ( a, b ) => b.orderDate.localeCompare( a.orderDate ) )
-        console.log( "sorted", sortedOrders )
-        let displayOrder = sortedOrders.map( ( order ) => {
+        let displayOrder = sortedOrders.slice( this.state.offset, this.state.offset + this.state.perPage ).map( ( order ) => {
             console.log( "in orders", order._id )
             return (
                 <div>
@@ -64,15 +79,24 @@ export class Orders extends Component {
             <div>
                 { redirectVar }
                 <div className="row">
-                    {/* <div className="col-2"><h3>Filter By:</h3></div>
+                    <div className="col-2"></div>
+                    <div className="col-2 m-2"><h2>&nbsp;&nbsp;&nbsp;&nbsp;Orders:</h2></div>
+                    <div className="col-4 m-2">
 
-                    <div className="col-1"><input type="radio" name="filter" value="All" onChange={ this.handleradioChange } defaultChecked /> All</div>
-                    <div className="col-1"><input type="radio" name="filter" value="Order Received" onChange={ this.handleradioChange } /> Order Received</div>
-                    <div className="col-1"> <input type="radio" name="filter" value="Preparing" onChange={ this.handleradioChange } /> Preparing</div>
-                    <div className="col-1"><input type="radio" name="filter" value="On The Way" onChange={ this.handleradioChange } /> On The Way</div>
-                    <div className="col-1"><input type="radio" name="filter" value="Delivered" onChange={ this.handleradioChange } /> Delivered</div>
-                    <div className="col-1"><input type="radio" name="filter" value="Pickup Ready" onChange={ this.handleradioChange } /> Pickup Ready</div>
-                    <div className="col-1"><input type="radio" name="filter" value="Picked Up" onChange={ this.handleradioChange } /> Picked Up</div> */}
+                        <ReactPaginate
+                            previousLabel={ "prev" }
+                            nextLabel={ "next" }
+                            breakLabel={ "..." }
+                            breakClassName={ "break-me" }
+                            pageCount={ pageCount }
+                            marginPagesDisplayed={ 2 }
+                            pageRangeDisplayed={ 5 }
+                            onPageChange={ this.handlePageClick }
+                            containerClassName={ "pagination" }
+                            subContainerClassName={ "pages pagination" }
+                            activeClassName={ "active" } />
+
+                    </div>
 
                 </div>
 
@@ -90,8 +114,11 @@ export class Orders extends Component {
 
                         </ul>
                     </div>
-                    <div className="col-10">{ displayOrder }</div>
-                    {/* <div className="col-1"></div> */ }
+                    <div className="col-10">
+
+                        { displayOrder }
+                    </div>
+
                 </div>
 
             </div >

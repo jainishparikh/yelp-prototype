@@ -6,12 +6,18 @@ import IndividualEvent from './IndividualEvent';
 import BACKEND_URL from '../../../config/config';
 import Modal from 'react-modal';
 import PostEvent from './PostEvent';
+import '../../../css/pagination.css';
+import ReactPaginate from 'react-paginate';
+
 export class Events extends Component {
     constructor( props ) {
         super( props )
         this.state = {
             Events: [],
-            postEventPopUp: false
+            postEventPopUp: false,
+            offset: 0,
+            perPage: 2,
+            pageCount: 0
         }
     }
 
@@ -20,14 +26,9 @@ export class Events extends Component {
         axios.defaults.headers.common[ "authorization" ] = cookie.load( 'token' )
         axios.defaults.withCredentials = true;
         return axios.get( BACKEND_URL + '/events/restaurants/' + restaurantID ).then( response => {
-            // response.data.map( ( event ) => {
-            //     this.setState( {
-            //         Events: [ ...this.state.Events, event ]
-            //     } )
-
-            // } )
             this.setState( {
-                Events: response.data
+                Events: response.data,
+                pageCount: Math.ceil( response.data.length / this.state.perPage )
             } )
             // console.log( this.state )
 
@@ -42,13 +43,21 @@ export class Events extends Component {
         } )
     }
 
+    handlePageClick = ( e ) => {
+
+        this.setState( {
+            offset: this.state.perPage * e.selected,
+
+        } )
+
+    };
 
     render () {
         var redirectVar = null;
         if ( !( cookie.load( "auth" ) && cookie.load( "type" ) === "restaurants" ) ) {
             redirectVar = <Redirect to="/login" />
         }
-        let details = this.state.Events.map( ( event, index ) => {
+        let details = this.state.Events.slice( this.state.offset, this.state.offset + this.state.perPage ).map( ( event, index ) => {
             return (
                 <IndividualEvent key={ index } eventData={ event } />
             )
@@ -94,7 +103,32 @@ export class Events extends Component {
 
                             </div>
                         </div>
-                        <div className='col-10' style={ { height: "20%" } }>{ details }</div>
+                        <div className='col-10' style={ { height: "20%" } }>
+                            <div className="row">
+                                <div className="col-4"></div>
+                                <div className="col-6">
+
+                                    <ReactPaginate
+                                        previousLabel={ "prev" }
+                                        nextLabel={ "next" }
+                                        breakLabel={ "..." }
+                                        breakClassName={ "break-me" }
+                                        pageCount={ this.state.pageCount }
+                                        marginPagesDisplayed={ 2 }
+                                        pageRangeDisplayed={ 5 }
+                                        onPageChange={ this.handlePageClick }
+                                        containerClassName={ "pagination" }
+                                        subContainerClassName={ "pages pagination" }
+                                        activeClassName={ "active" } />
+                                </div>
+
+                            </div>
+                            <div className="row" style={ { "width": "100%" } }>
+                                { details }
+                            </div>
+
+
+                        </div>
 
                     </div>
                 </div>

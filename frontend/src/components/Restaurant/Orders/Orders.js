@@ -4,6 +4,8 @@ import axios from 'axios';
 import BACKEND_URL from '../../../config/config';
 import IndividualOrder from "./IndividualOrder";
 import { Redirect } from 'react-router';
+import '../../../css/pagination.css';
+import ReactPaginate from 'react-paginate';
 
 export class Orders extends Component {
     constructor( props ) {
@@ -11,7 +13,10 @@ export class Orders extends Component {
         this.state = {
             Orders: [],
             orderStatusFilter: "All",
-            reload: false
+            reload: false,
+            offset: 0,
+            perPage: 2,
+            pageCount: 0
         }
     }
 
@@ -20,10 +25,10 @@ export class Orders extends Component {
         axios.defaults.headers.common[ "authorization" ] = cookie.load( 'token' )
         axios.defaults.withCredentials = true;
         axios.get( BACKEND_URL + '/orders/restaurants/' + restaurantID ).then( response => {
-            response.data.map( order => {
-                this.setState( {
-                    Orders: [ ...this.state.Orders, order ]
-                } )
+
+            this.setState( {
+                Orders: response.data,
+                pageCount: Math.ceil( response.data.length / this.state.perPage )
             } )
             console.log( this.state )
         } ).catch( error => {
@@ -37,17 +42,27 @@ export class Orders extends Component {
             orderStatusFilter: e.target.value
         } )
     }
+
+    handlePageClick = ( e ) => {
+
+        this.setState( {
+            offset: this.state.perPage * e.selected,
+        } )
+
+    };
+
     reload = () => {
         window.location.reload()
     }
     render () {
         let redirectVar = null
+        let pageCount = this.state.pageCount
         if ( !( cookie.load( "auth" ) && cookie.load( "type" ) === "restaurants" ) ) {
             redirectVar = <Redirect to="/login" />
         }
         let filteredOrders = this.state.Orders.filter( order => this.state.orderStatusFilter === "All" || order.orderStatus === this.state.orderStatusFilter )
-
-        let displayOrders = filteredOrders.map( order => {
+        pageCount = Math.ceil( filteredOrders.length / this.state.perPage )
+        let displayOrders = filteredOrders.slice( this.state.offset, this.state.offset + this.state.perPage ).map( order => {
             return ( <IndividualOrder reload={ this.reload } key={ order._id } orderData={ order } /> )
         } )
         return (
@@ -55,7 +70,23 @@ export class Orders extends Component {
                 { redirectVar }
                 <div className="row">
                     <div className="col-2"></div>
-                    <div className="col-8"><h2>Orders:</h2></div>
+                    <div className="col-2 m-2"><h2>Orders</h2></div>
+                    <div className="col-4 m-2">
+
+                        <ReactPaginate
+                            previousLabel={ "prev" }
+                            nextLabel={ "next" }
+                            breakLabel={ "..." }
+                            breakClassName={ "break-me" }
+                            pageCount={ pageCount }
+                            marginPagesDisplayed={ 2 }
+                            pageRangeDisplayed={ 5 }
+                            onPageChange={ this.handlePageClick }
+                            containerClassName={ "pagination" }
+                            subContainerClassName={ "pages pagination" }
+                            activeClassName={ "active" } />
+
+                    </div>
 
                 </div>
                 <div className="row">
@@ -69,7 +100,7 @@ export class Orders extends Component {
                             <li>  <input type="radio" name="filter" value="Delivered" onChange={ this.handleradioChange } /> Delivered</li>
                             <li>  <input type="radio" name="filter" value="Pick Up Ready" onChange={ this.handleradioChange } /> Pick Up Ready</li>
                             <li>  <input type="radio" name="filter" value="Picked Up" onChange={ this.handleradioChange } /> Picked Up</li>
-                            <li>  <input type="radio" name="filter" value="Cancelled" onChange={ this.handleradioChange } /> Cancelled</li>
+                            <li>  <input type="radio" name="filter" value="Cancel" onChange={ this.handleradioChange } /> Cancelled</li>
 
 
                         </ul>

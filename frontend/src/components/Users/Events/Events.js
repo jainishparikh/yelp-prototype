@@ -13,7 +13,8 @@ export class Events extends Component {
         this.state = {
             Events: [],
             RegisteredEvents: [],
-            searchInput: ""
+            searchInput: "",
+            sortBy: "Ascending"
 
         }
     }
@@ -62,6 +63,12 @@ export class Events extends Component {
         } )
     }
 
+    handleSortBy = ( e ) => {
+        this.setState( {
+            sortBy: e.target.value
+        } )
+    }
+
     render () {
         var redirectVar = null;
         if ( !( cookie.load( "auth" ) && cookie.load( "type" ) === "users" ) ) {
@@ -75,7 +82,12 @@ export class Events extends Component {
             let date1 = d1[ 0 ] + d1[ 1 ] + d1[ 2 ]
             let d2 = b.eventDate.split( "-" )
             let date2 = d2[ 0 ] + d2[ 1 ] + d2[ 2 ]
-            return date1 - date2
+            if ( this.state.sortBy === "Ascending" ) {
+                return date1 - date2
+            } else if ( this.state.sortBy === "Descending" ) {
+                return date2 - date1
+            }
+
         } )
         let details = sortedEvents.map( event => {
 
@@ -96,8 +108,15 @@ export class Events extends Component {
                     <div className="row">
                         <div className="col-8">
                             <div className="row m-3">
-                                <div className="col-4"></div>
+                                <div className="col-1"></div>
                                 <div className="col-4">
+                                    <b>Sort </b><select defaultValue="Ascending" onChange={ this.handleSortBy } name="sort" id="event">
+                                        <option value="Ascending" >Ascending</option>
+                                        <option value="Descending">Decending</option>
+                                    </select>
+
+                                </div>
+                                <div className="col-3">
                                     <input type="text" style={ { "width": "400px", "height": "30px", "border": "1px solid gray", "box-shadow": "0px 0px 10px gray" } } name="searchInput" onChange={ this.handleSearch } placeholder="Search Event by Name"></input>
                                 </div>
                                 <div className="col-4"></div>

@@ -3,11 +3,13 @@ import { Redirect } from 'react-router';
 import { Link } from 'react-router-dom'
 import cookie from 'react-cookies';
 import Modal from 'react-modal';
+import ReactPaginate from 'react-paginate';
 import axios from 'axios';
 import AddDish from '../Dishes/AddDishes';
 import IndividualDish from '../Dishes/IndividualDish';
 import BACKEND_URL from '../../../config/config';
-import profile_picture from '../../../images/restaurant.jpeg'
+import profile_picture from '../../../images/restaurant.jpeg';
+import '../../../css/pagination.css';
 
 export class RestaurantAbout extends Component {
     constructor( props ) {
@@ -22,7 +24,11 @@ export class RestaurantAbout extends Component {
             timing: "",
             dishPopUp: false,
             profileImagePath: profile_picture,
-            dishes: []
+            dishes: [],
+            offset: 0,
+            perPage: 5,
+            currentPage: 1,
+            pageCount: 0
         }
 
     }
@@ -48,7 +54,9 @@ export class RestaurantAbout extends Component {
                     timing: response.data.timing,
                     profileImagePath: imagePath,
                     dishes: response.data.dishes,
+                    pageCount: Math.ceil( response.data.dishes.length / this.state.perPage )
                 } )
+
             }
 
         } ).catch( ( err ) => {
@@ -66,6 +74,15 @@ export class RestaurantAbout extends Component {
         } )
     }
 
+    handlePageClick = ( e ) => {
+
+        this.setState( {
+            offset: this.state.perPage * e.selected,
+            currentPage: e.selected + 1
+        } )
+
+    };
+
 
     render () {
         var redirectVar = null;
@@ -81,7 +98,7 @@ export class RestaurantAbout extends Component {
             )
         } )
 
-        let details = this.state.dishes.map( ( dish ) => {
+        let details = this.state.dishes.slice( this.state.offset, this.state.offset + this.state.perPage ).map( ( dish ) => {
             return (
                 <IndividualDish key={ dish.dishID } dishData={ dish } />
             )
@@ -136,7 +153,7 @@ export class RestaurantAbout extends Component {
                             {/* Add dish */ }
                             <div className="row mt-3 mb-3">
 
-                                <div className="add-dish m-2" >
+                                <div className="col-4 m-2" >
                                     <button className="btn btn-danger" onClick={ this.toggleDishPopUp }>Add Dish</button>
                                 </div>
                                 {/* using react-modal for popup to add dish */ }
@@ -166,12 +183,25 @@ export class RestaurantAbout extends Component {
                                 } } >
                                     <AddDish call="add" closePopUp={ this.toggleDishPopUp } />
                                 </Modal>
-
-
+                                <div className="col-3 m-2">
+                                    <ReactPaginate
+                                        previousLabel={ "prev" }
+                                        nextLabel={ "next" }
+                                        breakLabel={ "..." }
+                                        breakClassName={ "break-me" }
+                                        pageCount={ this.state.pageCount }
+                                        marginPagesDisplayed={ 2 }
+                                        pageRangeDisplayed={ 5 }
+                                        onPageChange={ this.handlePageClick }
+                                        containerClassName={ "pagination" }
+                                        subContainerClassName={ "pages pagination" }
+                                        activeClassName={ "active" } />
+                                </div>
 
                             </div>
                             {/* Display dishes */ }
                             <div className="row" >
+
                                 <div className="dishes">
                                     { details }
                                 </div>

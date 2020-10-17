@@ -26,7 +26,7 @@ export class IndividualEvent extends Component {
 
     render () {
         return (
-            <div>
+            <div style={ { "width": "90%" } }>
                 <div className="container pt-5" >
                     <div className="row" style={ { "padding": "10px", "background": "whitesmoke", "box-shadow": "0px 0px 10px gray" } }>
                         <div className="col-9">

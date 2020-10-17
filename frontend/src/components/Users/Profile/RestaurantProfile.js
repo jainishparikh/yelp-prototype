@@ -10,6 +10,8 @@ import OrderNow from '../Orders/OrderNow';
 import BACKEND_URL from '../../../config/config';
 import profile_picture from '../../../images/restaurant.jpeg';
 import AddReview from '../Reviews/AddReview'
+import ReactPaginate from 'react-paginate';
+import '../../../css/pagination.css';
 
 export class RestaurantProfile extends Component {
     constructor( props ) {
@@ -28,6 +30,9 @@ export class RestaurantProfile extends Component {
             Orders: [],
             reviewPopUp: false,
             orderPopUp: false,
+            offset: 0,
+            perPage: 2,
+            pageCount: 0
         }
 
     }
@@ -54,6 +59,7 @@ export class RestaurantProfile extends Component {
                     timing: response.data.timing,
                     profileImagePath: imagePath,
                     dishes: response.data.dishes,
+                    pageCount: Math.ceil( response.data.dishes.length / this.state.perPage )
 
                 } )
             }
@@ -99,6 +105,14 @@ export class RestaurantProfile extends Component {
         } )
     }
 
+    handlePageClick = ( e ) => {
+
+        this.setState( {
+            offset: this.state.perPage * e.selected,
+        } )
+
+    };
+
     render () {
         var redirectVar = null;
         if ( !( cookie.load( "auth" ) && cookie.load( "type" ) === "users" ) ) {
@@ -108,11 +122,11 @@ export class RestaurantProfile extends Component {
         let displayDishImages = this.state.dishes.map( ( dish ) => {
             var dishImagePath = BACKEND_URL + "/images/dishes/" + dish.dishPicture
             return (
-                <img src={ dishImagePath } style={ { "margin": "10px" } } width="200px" height="90%" alt="" />
+                <img src={ dishImagePath } style={ { "margin": "10px", "box-shadow": "0px 0px 10px gray" } } width="250px" height="90%" alt="" />
             )
         } )
 
-        let details = this.state.dishes.map( ( dish ) => {
+        let details = this.state.dishes.slice( this.state.offset, this.state.offset + this.state.perPage ).map( ( dish ) => {
             return (
                 <IndividualDish removeFromOrder={ this.removeFromOrderProfile } addToOrder={ this.addToOrderProfile } dishData={ dish } />
             )
@@ -185,11 +199,28 @@ export class RestaurantProfile extends Component {
                                     { displayDishImages }
                                 </div>
                             </div>
+                            <div className="row mt-2">
+                                <div className="col-4"><h3>Select dishes to order:</h3></div>
+                                <div className="col-5 m-2">
+                                    <ReactPaginate
+                                        previousLabel={ "prev" }
+                                        nextLabel={ "next" }
+                                        breakLabel={ "..." }
+                                        breakClassName={ "break-me" }
+                                        pageCount={ this.state.pageCount }
+                                        marginPagesDisplayed={ 2 }
+                                        pageRangeDisplayed={ 5 }
+                                        onPageChange={ this.handlePageClick }
+                                        containerClassName={ "pagination" }
+                                        subContainerClassName={ "pages pagination" }
+                                        activeClassName={ "active" } />
+                                </div>
+                            </div>
                             {/* Display dishes */ }
                             <div className="row">
                                 <div className="dishes">
                                     { details }
-                                    {/* <GetDishes removeFromOrder={ this.removeFromOrderProfile } addToOrder={ this.addToOrderProfile } restaurantID={ this.props.match.params.restaurantID } displayDishes={ this.displayImageStore } /> */ }
+
                                 </div>
                             </div>
 
