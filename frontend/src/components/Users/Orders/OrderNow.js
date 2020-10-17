@@ -31,6 +31,8 @@ export class OrderNow extends Component {
             orderMethod: this.state.deliveryMethod,
             dishes: this.state.OrderItems,
         }
+        axios.defaults.headers.common[ "authorization" ] = cookie.load( 'token' )
+        axios.defaults.withCredentials = true;
         axios.post( BACKEND_URL + '/orders/users/placeOrder', data ).then( response => {
             console.log( "Added order successfully", response.data );
             this.setState( {

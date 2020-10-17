@@ -31,6 +31,8 @@ export class UserProfile extends Component {
 
     componentDidMount () {
         let email = this.props.match.params.userEmail
+        axios.defaults.headers.common[ "authorization" ] = cookie.load( 'token' )
+        axios.defaults.withCredentials = true;
         axios.get( BACKEND_URL + '/users/about/' + email ).then( ( response ) => {
             if ( response.status === 200 ) {
                 console.log( "got data" )

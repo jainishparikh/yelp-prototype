@@ -98,6 +98,8 @@ export class Profile extends Component {
         e.preventDefault();
         console.log( "in handle submit" )
         if ( !this.state.error ) {
+            axios.defaults.headers.common[ "authorization" ] = cookie.load( 'token' )
+            axios.defaults.withCredentials = true;
             axios
                 .put( BACKEND_URL + "/users/about", this.state ).then( response => {
                     if ( response.status === 200 ) {

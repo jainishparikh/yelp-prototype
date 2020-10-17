@@ -1,7 +1,9 @@
 import React, { Component } from 'react'
 import { Link } from 'react-router-dom';
 import axios from 'axios';
-import BACKEND_URL from '../../../config/config'
+import BACKEND_URL from '../../../config/config';
+import cookie from 'react-cookies';
+
 
 export class EventRegistrations extends Component {
     constructor( props ) {
@@ -13,6 +15,8 @@ export class EventRegistrations extends Component {
     }
     componentDidMount () {
         var eventID = this.state.eventID
+        axios.defaults.headers.common[ "authorization" ] = cookie.load( 'token' )
+        axios.defaults.withCredentials = true;
         axios.get( BACKEND_URL + '/events/attendees/' + eventID ).then( response => {
             response.data.map( ( attendee ) => {
                 this.setState( {

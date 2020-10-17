@@ -3,7 +3,9 @@ import OrderDetails from './OrderDetails';
 import axios from 'axios';
 import BACKEND_URL from '../../../config/config';
 import Modal from 'react-modal';
-import profile_picture from '../../../images/restaurant.jpeg'
+import profile_picture from '../../../images/restaurant.jpeg';
+import cookie from 'react-cookies';
+
 
 
 export class IndividualOrder extends Component {
@@ -56,6 +58,8 @@ export class IndividualOrder extends Component {
             orderStatus: 'Cancel'
         }
         console.log( orderID )
+        axios.defaults.headers.common[ "authorization" ] = cookie.load( 'token' )
+        axios.defaults.withCredentials = true;
         axios.put( BACKEND_URL + '/orders/users/cancel/' + orderID, data ).then( response => {
             this.setState( {
                 cancelled: true

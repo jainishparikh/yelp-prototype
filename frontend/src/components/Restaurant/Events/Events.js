@@ -17,7 +17,8 @@ export class Events extends Component {
 
     componentDidMount () {
         var restaurantID = cookie.load( 'id' )
-        // var restaurantID = 13
+        axios.defaults.headers.common[ "authorization" ] = cookie.load( 'token' )
+        axios.defaults.withCredentials = true;
         return axios.get( BACKEND_URL + '/events/restaurants/' + restaurantID ).then( response => {
             // response.data.map( ( event ) => {
             //     this.setState( {

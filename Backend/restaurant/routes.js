@@ -4,6 +4,10 @@ var router = express.Router();
 var mongoose = require( '../config/db_config' );
 var restaurantsSchema = require( '../models/restaurants' );
 var nodeGeocoder = require( 'node-geocoder' );
+var jwt = require( 'jsonwebtoken' );
+var { secret } = require( '../config/config' )
+var { auth, checkAuth } = require( '../config/passport' )
+auth();
 
 let options = {
     provider: 'openstreetmap'
@@ -49,8 +53,18 @@ router.post( '/login', ( req, res ) => {
     restaurantsSchema.findOne( { email: req.body.email } ).then( doc => {
 
         if ( bcrypt.compareSync( req.body.password, doc.password ) ) {
+
+            let payload = {
+                _id: doc._id,
+                type: "restaurants",
+                email: doc.email,
+                name: doc.name
+            }
+            let token = jwt.sign( payload, secret, {
+                expiresIn: 1008000
+            } )
             console.log( "Login Successfull" )
-            res.status( 200 ).send( doc )
+            res.status( 200 ).send( "Bearer " + token )
         } else {
             console.log( "Invalid Credentials" )
             res.status( 401 ).send( "Invalid Credentials" )
@@ -64,8 +78,8 @@ router.post( '/login', ( req, res ) => {
 } );
 
 // get all restaurants
-router.get( '/all', ( req, res ) => {
-
+router.get( '/all', checkAuth, ( req, res ) => {
+    console.log( "In restauranst all" )
     restaurantsSchema.find().then( docs => {
 
         console.log( "Restaurants", docs )
@@ -81,7 +95,7 @@ router.get( '/all', ( req, res ) => {
 
 
 //get restaurant about by email
-router.get( '/about/:email', ( req, res ) => {
+router.get( '/about/:email', checkAuth, ( req, res ) => {
 
     restaurantsSchema.findOne( { email: req.params.email } ).then( doc => {
 
@@ -98,7 +112,7 @@ router.get( '/about/:email', ( req, res ) => {
 
 
 //get restaurant about by id
-router.get( '/aboutbyID/:id', ( req, res ) => {
+router.get( '/aboutbyID/:id', checkAuth, ( req, res ) => {
     restaurantsSchema.findOne( { _id: req.params.id } ).then( doc => {
 
         console.log( "User", doc )
@@ -113,7 +127,7 @@ router.get( '/aboutbyID/:id', ( req, res ) => {
 
 
 //update restaurant about
-router.put( '/about', ( req, res ) => {
+router.put( '/about', checkAuth, ( req, res ) => {
     let location = req.body.location
     geoCoder.geocode( location )
         .then( ( result ) => {
@@ -147,7 +161,7 @@ router.put( '/about', ( req, res ) => {
 
 
 //upload profile pic
-router.post( '/uploadpicture', ( req, res ) => {
+router.post( '/uploadpicture', checkAuth, ( req, res ) => {
     let upload = req.app.get( 'upload_profileImage' );
     upload( req, res, err => {
         if ( err ) {
@@ -170,7 +184,7 @@ router.post( '/uploadpicture', ( req, res ) => {
 
 
 //get dishes by restaurants
-router.get( '/dishes/:restaurantID', ( req, res ) => {
+router.get( '/dishes/:restaurantID', checkAuth, ( req, res ) => {
 
     restaurantsSchema.find().then( doc => {
 
@@ -187,7 +201,7 @@ router.get( '/dishes/:restaurantID', ( req, res ) => {
 
 
 //add dishes
-router.post( '/dishes', ( req, res ) => {
+router.post( '/dishes', checkAuth, ( req, res ) => {
     let upload = req.app.get( 'upload_dishImage' );
     upload( req, res, err => {
         if ( err ) {

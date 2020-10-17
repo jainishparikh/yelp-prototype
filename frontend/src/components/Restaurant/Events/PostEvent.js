@@ -38,6 +38,8 @@ export class PostEvent extends Component {
             Hashtags: this.state.hashtags,
             restaurantID: cookie.load( 'id' ),
         }
+        axios.defaults.headers.common[ "authorization" ] = cookie.load( 'token' )
+        axios.defaults.withCredentials = true;
         axios.post( BACKEND_URL + "/events/restaurants/addEvent", eventData ).then( response => {
             if ( response.status === 200 ) {
                 console.log( "Event successfully Posted" + response );

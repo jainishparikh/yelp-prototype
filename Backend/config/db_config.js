@@ -1,9 +1,10 @@
 var mongoose = require( 'mongoose' );
+var { mongodb_string } = require( './config' )
 
 // mongoose.Promise = global.Promise;
 
 
-mongoose.connect( 'mongodb+srv://jainishp:cmpe273@cluster0.vcynn.mongodb.net/Yelp?retryWrites=true&w=majority', {
+mongoose.connect( mongodb_string, {
     useNewUrlParser: true,
     useUnifiedTopology: true
     // useMongoClient: true

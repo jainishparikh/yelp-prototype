@@ -4,6 +4,8 @@ import BACKEND_URL from '../../../config/config';
 import Modal from 'react-modal';
 import { Link } from 'react-router-dom';
 import profile_picture from '../../../images/profile.png';
+import cookie from 'react-cookies';
+
 
 export class IndividualOrder extends Component {
     constructor( props ) {
@@ -20,6 +22,8 @@ export class IndividualOrder extends Component {
     componentDidMount () {
 
         var userID = this.props.orderData.userID
+        axios.defaults.headers.common[ "authorization" ] = cookie.load( 'token' )
+        axios.defaults.withCredentials = true;
         axios.get( BACKEND_URL + '/users/aboutbyID/' + userID ).then( response => {
             this.setState( {
                 userData: response.data

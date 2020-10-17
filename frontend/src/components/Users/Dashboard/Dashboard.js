@@ -20,6 +20,8 @@ export class Dashboard extends Component {
 
     componentDidMount () {
         // getting all restaurants
+        axios.defaults.headers.common[ "authorization" ] = cookie.load( 'token' )
+        axios.defaults.withCredentials = true;
         axios.get( BACKEND_URL + '/restaurants/all' ).then( responseRestaurants => {
 
             this.setState( {

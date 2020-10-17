@@ -23,6 +23,8 @@ export class GetDishes extends Component {
 
     componentDidMount () {
         var restaurantID = this.props.restaurantID;
+        axios.defaults.headers.common[ "authorization" ] = cookie.load( 'token' )
+        axios.defaults.withCredentials = true;
         axios.get( BACKEND_URL + "/restaurants/dishes/" + restaurantID ).then( response => {
             if ( response.status === 200 ) {
                 let images = []

@@ -2,10 +2,13 @@ var express = require( 'express' );
 var router = express.Router();
 var mongoose = require( '../config/db_config' );
 var reviewSchema = require( '../models/review' )
+var { secret } = require( '../config/config' )
+var { auth, checkAuth } = require( '../config/passport' )
+auth();
 
 
 //ad reviews
-router.post( '/addreview', ( req, res ) => {
+router.post( '/addreview', checkAuth, ( req, res ) => {
 
     var review = new reviewSchema( {
         userID: req.body.userID,
@@ -28,7 +31,7 @@ router.post( '/addreview', ( req, res ) => {
 } )
 
 //get reviews by users
-router.get( '/getreviews/users/:id', ( req, res ) => {
+router.get( '/getreviews/users/:id', checkAuth, ( req, res ) => {
     // console.log( "id", req.params.id )
     reviewSchema.find( { userID: req.params.id } ).then( doc => {
         console.log( "Review users", doc )
@@ -41,7 +44,7 @@ router.get( '/getreviews/users/:id', ( req, res ) => {
 
 
 //get reviews by type
-router.get( '/getreviews/restaurants/:id', ( req, res ) => {
+router.get( '/getreviews/restaurants/:id', checkAuth, ( req, res ) => {
 
     reviewSchema.find( { restaurantID: req.params.id } ).then( doc => {
         console.log( "Review restauranst", doc )

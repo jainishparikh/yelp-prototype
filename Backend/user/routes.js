@@ -3,6 +3,10 @@ var bcrypt = require( 'bcrypt' );
 var router = express.Router();
 var mongoose = require( '../config/db_config' );
 var userSchema = require( '../models/users' );
+var jwt = require( 'jsonwebtoken' );
+var { secret } = require( '../config/config' )
+var { auth, checkAuth } = require( '../config/passport' )
+auth();
 
 //signup
 router.post( '/signup', ( req, res ) => {
@@ -48,8 +52,18 @@ router.post( '/login', ( req, res ) => {
     userSchema.findOne( { email: req.body.email } ).then( doc => {
 
         if ( bcrypt.compareSync( req.body.password, doc.password ) ) {
-            console.log( "Login Successfull" )
-            res.status( 200 ).send( doc )
+            let payload = {
+                _id: doc._id,
+                type: "users",
+                email: doc.email,
+                name: doc.name
+            }
+
+            let token = jwt.sign( payload, secret, {
+                expiresIn: 1008000
+            } )
+            console.log( "Login Successfull", token )
+            res.status( 200 ).send( "Bearer " + token )
         } else {
             console.log( "Invalid Credentials" )
             res.status( 401 ).send( "Invalid Credentials" )
@@ -63,7 +77,7 @@ router.post( '/login', ( req, res ) => {
 } );
 
 //get user about by email
-router.get( '/about/:email', ( req, res ) => {
+router.get( '/about/:email', checkAuth, ( req, res ) => {
 
     userSchema.findOne( { email: req.params.email } ).then( doc => {
 
@@ -80,7 +94,7 @@ router.get( '/about/:email', ( req, res ) => {
 
 
 //get user about by id
-router.get( '/aboutbyID/:id', ( req, res ) => {
+router.get( '/aboutbyID/:id', checkAuth, ( req, res ) => {
     userSchema.findOne( { _id: req.params.id } ).then( doc => {
 
         console.log( "User", doc )
@@ -96,7 +110,7 @@ router.get( '/aboutbyID/:id', ( req, res ) => {
 
 
 //update user about
-router.put( '/about', ( req, res ) => {
+router.put( '/about', checkAuth, ( req, res ) => {
 
     userSchema.findOneAndUpdate( { email: req.body.email },
         {
@@ -128,7 +142,7 @@ router.put( '/about', ( req, res ) => {
 
 
 //upload profile pic
-router.post( '/uploadpicture', ( req, res ) => {
+router.post( '/uploadpicture', checkAuth, ( req, res ) => {
     let upload = req.app.get( 'upload_profileImage' );
     upload( req, res, err => {
         if ( err ) {

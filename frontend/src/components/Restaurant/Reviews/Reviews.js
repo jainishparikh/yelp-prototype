@@ -15,6 +15,8 @@ export class Reviews extends Component {
     componentDidMount () {
         var type = cookie.load( 'type' )
         var id = cookie.load( 'id' )
+        axios.defaults.headers.common[ "authorization" ] = cookie.load( 'token' )
+        axios.defaults.withCredentials = true;
         axios.get( BACKEND_URL + '/reviews/getreviews/' + type + '/' + id ).then( response => {
             response.data.map( ( review ) => {
                 this.setState( {

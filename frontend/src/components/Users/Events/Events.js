@@ -20,6 +20,8 @@ export class Events extends Component {
 
     componentDidMount () {
         // getting all events
+        axios.defaults.headers.common[ "authorization" ] = cookie.load( 'token' )
+        axios.defaults.withCredentials = true;
         axios.get( BACKEND_URL + '/events/' ).then( response => {
             console.log( "got events", response.data )
             response.data.map( ( event ) => {
@@ -36,6 +38,8 @@ export class Events extends Component {
 
         //getting registered events
         var id = cookie.load( 'id' )
+        axios.defaults.headers.common[ "authorization" ] = cookie.load( 'token' )
+        axios.defaults.withCredentials = true;
         axios.get( BACKEND_URL + '/events/users/' + id ).then( response => {
             console.log( "Got registered events" );
             response.data.map( ( event ) => {

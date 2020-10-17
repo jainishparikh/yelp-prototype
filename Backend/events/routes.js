@@ -3,10 +3,13 @@ const { route } = require( '../reviews/routes' );
 var router = express.Router();
 var mongoose = require( '../config/db_config' );
 var eventSchema = require( '../models/events' );
+var { secret } = require( '../config/config' )
+var { auth, checkAuth } = require( '../config/passport' )
+auth();
 
 
 //get all events
-router.get( '/', ( req, res ) => {
+router.get( '/', checkAuth, ( req, res ) => {
     eventSchema.find( {} ).then( doc => {
         console.log( "All Events", doc )
         res.status( 200 ).send( JSON.stringify( doc ) )
@@ -17,7 +20,7 @@ router.get( '/', ( req, res ) => {
 } )
 
 //get users by events
-router.get( '/attendees/:id', ( req, res ) => {
+router.get( '/attendees/:id', checkAuth, ( req, res ) => {
 
     eventSchema.findById( { _id: req.params.id } ).then( doc => {
         console.log( "Users by Events", doc.users )
@@ -30,7 +33,7 @@ router.get( '/attendees/:id', ( req, res ) => {
 
 
 //get events by restaurants
-router.get( '/restaurants/:id', ( req, res ) => {
+router.get( '/restaurants/:id', checkAuth, ( req, res ) => {
     console.log( "Rest ID", req.params.id )
     eventSchema.find( { restaurantID: req.params.id } ).then( docs => {
         console.log( "Events by restaurants", docs )
@@ -43,7 +46,7 @@ router.get( '/restaurants/:id', ( req, res ) => {
 
 
 //post events by restaurants
-router.post( '/restaurants/addEvent', ( req, res ) => {
+router.post( '/restaurants/addEvent', checkAuth, ( req, res ) => {
     var eventDetails = new eventSchema( {
         eventName: req.body.eventName,
         eventDescription: req.body.eventDescription,
@@ -68,7 +71,7 @@ router.post( '/restaurants/addEvent', ( req, res ) => {
 
 
 //register for an event for user
-router.post( '/users/register', ( req, res ) => {
+router.post( '/users/register', checkAuth, ( req, res ) => {
 
     var user = {
         userID: req.body.userID,
@@ -93,7 +96,7 @@ router.post( '/users/register', ( req, res ) => {
 
 
 // get all registered events for a user
-router.get( '/users/:id', ( req, res ) => {
+router.get( '/users/:id', checkAuth, ( req, res ) => {
 
     eventSchema.find( { "users.userID": req.params.id } ).then( docs => {
         console.log( "Registered Events", docs )

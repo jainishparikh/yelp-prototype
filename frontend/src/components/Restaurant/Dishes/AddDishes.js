@@ -88,6 +88,8 @@ export class AddDishes extends Component {
                 }
             }
             console.log( formData );
+            axios.defaults.headers.common[ "authorization" ] = cookie.load( 'token' )
+            axios.defaults.withCredentials = true;
             axios
                 .put( BACKEND_URL + api_path, formData, config ).then( response => {
                     if ( response.status === 200 ) {
@@ -119,6 +121,8 @@ export class AddDishes extends Component {
                     'content-type': 'multipart/form-data'
                 }
             }
+            axios.defaults.headers.common[ "authorization" ] = cookie.load( 'token' )
+            axios.defaults.withCredentials = true;
             axios
                 .post( BACKEND_URL + "/restaurants/dishes", formData, config ).then( response => {
                     if ( response.status === 200 ) {

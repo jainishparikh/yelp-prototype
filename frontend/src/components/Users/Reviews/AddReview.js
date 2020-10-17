@@ -38,6 +38,8 @@ export class AddReview extends Component {
             date: this.state.date,
         }
         console.log( "in handleOnsubmit" )
+        axios.defaults.headers.common[ "authorization" ] = cookie.load( 'token' )
+        axios.defaults.withCredentials = true;
         axios.post( BACKEND_URL + '/reviews/addreview', data ).then( response => {
             if ( response.status === 200 ) {
                 console.log( "review added" );

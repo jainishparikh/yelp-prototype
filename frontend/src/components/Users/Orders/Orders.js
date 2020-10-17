@@ -16,6 +16,8 @@ export class Orders extends Component {
     }
     componentDidMount () {
         var userID = cookie.load( 'id' )
+        axios.defaults.headers.common[ "authorization" ] = cookie.load( 'token' )
+        axios.defaults.withCredentials = true;
         axios.get( BACKEND_URL + '/orders/users/' + userID ).then( response => {
             if ( response.status === 200 ) {
                 response.data.map( order => {

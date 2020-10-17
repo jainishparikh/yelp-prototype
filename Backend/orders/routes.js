@@ -3,10 +3,12 @@ const { route } = require( '../reviews/routes' );
 var router = express.Router();
 var mongoose = require( '../config/db_config' );
 var orderSchema = require( "../models/order" );
-const order = require( '../models/order' );
+var { secret } = require( '../config/config' )
+var { auth, checkAuth } = require( '../config/passport' )
+auth();
 
 //get orders by restaurants
-router.get( '/restaurants/:id', ( req, res ) => {
+router.get( '/restaurants/:id', checkAuth, ( req, res ) => {
 
     orderSchema.find( { restaurantID: req.params.id } ).then( docs => {
         console.log( "Orders by Restaurant", docs )
@@ -21,7 +23,7 @@ router.get( '/restaurants/:id', ( req, res ) => {
 
 
 //get orders by users
-router.get( '/users/:id', ( req, res ) => {
+router.get( '/users/:id', checkAuth, ( req, res ) => {
 
     orderSchema.find( { userID: req.params.id } ).then( docs => {
         console.log( "Orders by Restaurant", docs )
@@ -35,7 +37,7 @@ router.get( '/users/:id', ( req, res ) => {
 } )
 
 //post order by user
-router.post( '/users/placeOrder', ( req, res ) => {
+router.post( '/users/placeOrder', checkAuth, ( req, res ) => {
 
     let ts = Date.now();
 
@@ -70,7 +72,7 @@ router.post( '/users/placeOrder', ( req, res ) => {
 
 
 //update order status by restaurant
-router.put( '/restaurants/update/:id', ( req, res ) => {
+router.put( '/restaurants/update/:id', checkAuth, ( req, res ) => {
 
 
     orderSchema.findOneAndUpdate( { _id: req.params.id }, { $set: { orderStatus: req.body.orderStatus } } ).then( response => {
@@ -85,7 +87,7 @@ router.put( '/restaurants/update/:id', ( req, res ) => {
 
 
 //update/cancel order status by restaurant
-router.put( '/users/cancel/:id', ( req, res ) => {
+router.put( '/users/cancel/:id', checkAuth, ( req, res ) => {
 
     orderSchema.findOneAndUpdate( { _id: req.params.id },
         { $set: { orderStatus: req.body.orderStatus, cancelled: "Yes" } }

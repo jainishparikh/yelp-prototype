@@ -33,6 +33,8 @@ export class RestaurantProfile extends Component {
     }
     componentDidMount () {
         let email = this.props.match.params.restaurantEmail
+        axios.defaults.headers.common[ "authorization" ] = cookie.load( 'token' )
+        axios.defaults.withCredentials = true;
         axios.get( BACKEND_URL + '/restaurants/about/' + email ).then( ( response ) => {
             console.log( response )
             if ( response.status === 200 ) {

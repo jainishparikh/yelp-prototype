@@ -17,6 +17,8 @@ export class Orders extends Component {
 
     componentDidMount () {
         var restaurantID = cookie.load( 'id' );
+        axios.defaults.headers.common[ "authorization" ] = cookie.load( 'token' )
+        axios.defaults.withCredentials = true;
         axios.get( BACKEND_URL + '/orders/restaurants/' + restaurantID ).then( response => {
             response.data.map( order => {
                 this.setState( {

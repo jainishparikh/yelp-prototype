@@ -5,6 +5,7 @@ import axios from 'axios';
 import cookie from "react-cookies";
 import BACKEND_URL from '../../config/config'
 import yelp_image from '../../images/yelp-login.png'
+import jwt_decode from "jwt-decode"
 
 export class Login extends Component {
     constructor( props ) {
@@ -83,27 +84,36 @@ export class Login extends Component {
                         this.setState( {
                             error: false
                         } )
+                        console.log( "resdat", response.data.split( ' ' )[ 1 ] )
+                        let decoded = jwt_decode( response.data.split( ' ' )[ 1 ] )
+
+                        console.log( "decoded", decoded )
                         cookie.save( "auth", true, {
                             path: '/',
                             httpOnly: false,
                             maxAge: 90000
                         } )
-                        cookie.save( "id", response.data._id, {
+                        cookie.save( "token", response.data, {
                             path: '/',
                             httpOnly: false,
                             maxAge: 90000
                         } )
-                        cookie.save( "name", response.data.name, {
+                        cookie.save( "id", decoded._id, {
                             path: '/',
                             httpOnly: false,
                             maxAge: 90000
                         } )
-                        cookie.save( "email", response.data.email, {
+                        cookie.save( "name", decoded.name, {
                             path: '/',
                             httpOnly: false,
                             maxAge: 90000
                         } )
-                        cookie.save( "type", this.state.type, {
+                        cookie.save( "email", decoded.email, {
+                            path: '/',
+                            httpOnly: false,
+                            maxAge: 90000
+                        } )
+                        cookie.save( "type", decoded.type, {
                             path: '/',
                             httpOnly: false,
                             maxAge: 90000

@@ -28,6 +28,9 @@ export class RestaurantAbout extends Component {
     }
     componentDidMount () {
         let email = cookie.load( "email" )
+        axios.defaults.headers.common[ "authorization" ] = cookie.load( 'token' )
+        axios.defaults.withCredentials = true;
+
         axios.get( BACKEND_URL + '/restaurants/about/' + email ).then( ( response ) => {
             if ( response.status === 200 ) {
                 let imagePath = BACKEND_URL + "/images/profilepics/" + response.data.profilePicture
@@ -49,7 +52,7 @@ export class RestaurantAbout extends Component {
             }
 
         } ).catch( ( err ) => {
-            console.log( " error getting restaurant data" )
+            console.log( " error getting restaurant data", err )
             this.setState( {
                 error: true
             } )

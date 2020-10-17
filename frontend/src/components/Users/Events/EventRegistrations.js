@@ -20,6 +20,8 @@ export class EventRegistrations extends Component {
     }
     componentDidMount () {
         var id = cookie.load( 'id' )
+        axios.defaults.headers.common[ "authorization" ] = cookie.load( 'token' )
+        axios.defaults.withCredentials = true;
         axios.get( BACKEND_URL + '/events/users/' + id ).then( response => {
             console.log( "Got registered events", response );
             let exist = response.data.some( event => event._id === this.state.eventID )
