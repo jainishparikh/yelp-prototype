@@ -3,7 +3,8 @@ import BACKEND_URL from '../../../config/config'
 import axios from 'axios';
 import cookie from 'react-cookies';
 import { Redirect } from 'react-router';
-
+import orderNowAction from '../../../actions/orderNowAction'
+import { connect } from "react-redux";
 export class OrderNow extends Component {
     constructor( props ) {
         super( props )
@@ -31,28 +32,31 @@ export class OrderNow extends Component {
             orderMethod: this.state.deliveryMethod,
             dishes: this.state.OrderItems,
         }
-        axios.defaults.headers.common[ "authorization" ] = cookie.load( 'token' )
-        axios.defaults.withCredentials = true;
-        axios.post( BACKEND_URL + '/orders/users/placeOrder', data ).then( response => {
-            console.log( "Added order successfully", response.data );
-            this.setState( {
-                orderPlaced: true
-            } )
-            // var dishData = {
-            //     OrderItems: this.state.OrderItems,
-            //     orderID: response.data.orderID
-            // }
-            // axios.post( BACKEND_URL + '/orders/users/placeOrder/addDishes', dishData ).then( response => {
-            //     console.log( "Dishes successfully mapped" );
-            //     this.setState( {
-            //         orderPlaced: true
-            //     } )
-            // } ).catch( error => {
-            //     console.log( "Error in mapping dishes in orders:", error )
-            // } )
-        } ).catch( error => {
-            console.log( "Error in posting order: ", error )
+        this.props.orderNowAction( data ).then( response => {
+            if ( this.props.orderPlaced ) {
+                this.setState( {
+                    orderPlaced: this.props.orderPlaced
+                } )
+            }
         } )
+        // var data = {
+        //     userID: cookie.load( 'id' ),
+        //     restaurantID: this.props.orderData.restaurantID,
+        //     orderStatus: 'Order Received',
+        //     orderMethod: this.state.deliveryMethod,
+        //     dishes: this.state.OrderItems,
+        // }
+        // axios.defaults.headers.common[ "authorization" ] = cookie.load( 'token' )
+        // axios.defaults.withCredentials = true;
+        // axios.post( BACKEND_URL + '/orders/users/placeOrder', data ).then( response => {
+        //     console.log( "Added order successfully", response.data );
+        //     this.setState( {
+        //         orderPlaced: true
+        //     } )
+
+        // } ).catch( error => {
+        //     console.log( "Error in posting order: ", error )
+        // } )
 
 
     }
@@ -69,8 +73,10 @@ export class OrderNow extends Component {
 
     render () {
         let redirectVar = null
-        if ( this.state.orderPlaced === true ) {
+        if ( this.state.orderPlaced ) {
             redirectVar = <Redirect to="/users/orders" />
+            // this.props.closePopUp()
+            // window.location.assign( '/users/orders' )
         }
         let dishes = this.state.OrderItems.map( dish => {
             return (
@@ -119,5 +125,17 @@ export class OrderNow extends Component {
         )
     }
 }
+const matchStateToProps = ( state ) => {
+    return {
+        orderPlaced: state.orderReducer.orderPlaced
+    }
 
-export default OrderNow
+}
+
+const matchDispatchToProps = ( dispatch ) => {
+    return {
+        orderNowAction: ( data ) => dispatch( orderNowAction( data ) ),
+    }
+}
+
+export default connect( matchStateToProps, matchDispatchToProps )( OrderNow )

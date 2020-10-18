@@ -99,7 +99,7 @@ router.get( '/about/:email', checkAuth, ( req, res ) => {
 
     restaurantsSchema.findOne( { email: req.params.email } ).then( doc => {
 
-        console.log( "Restaurant", doc )
+        // console.log( "Restaurant", doc )
         res.status( 200 ).send( JSON.stringify( doc ) )
 
 
@@ -115,7 +115,7 @@ router.get( '/about/:email', checkAuth, ( req, res ) => {
 router.get( '/aboutbyID/:id', checkAuth, ( req, res ) => {
     restaurantsSchema.findOne( { _id: req.params.id } ).then( doc => {
 
-        console.log( "User", doc )
+        // console.log( "User", doc )
         res.status( 200 ).send( JSON.stringify( doc ) )
 
     } ).catch( error => {

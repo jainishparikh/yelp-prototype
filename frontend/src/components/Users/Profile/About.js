@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, { Children, Component } from 'react'
 import { Redirect } from 'react-router';
 import { Link } from 'react-router-dom'
 import cookie from 'react-cookies';
@@ -31,6 +31,7 @@ export class UserAbout extends Component {
 
     }
     componentDidMount () {
+
         this.props.getUserProfileAction( this.state );
         // let email = cookie.load( "email" )
         // axios.defaults.headers.common[ "authorization" ] = cookie.load( 'token' )

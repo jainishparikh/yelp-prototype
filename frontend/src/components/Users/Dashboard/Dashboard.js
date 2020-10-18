@@ -5,6 +5,8 @@ import axios from 'axios';
 import BACKEND_URL from '../../../config/config';
 import IndividualRestaurant from './IndividualRestaurant';
 import Maps from './Map';
+import restaurantsActions from '../../../actions/restaurantsActions'
+import { connect } from "react-redux";
 
 
 export class Dashboard extends Component {
@@ -19,21 +21,23 @@ export class Dashboard extends Component {
     }
 
     componentDidMount () {
+        this.props.restaurantsActions()
         // getting all restaurants
-        axios.defaults.headers.common[ "authorization" ] = cookie.load( 'token' )
-        axios.defaults.withCredentials = true;
-        axios.get( BACKEND_URL + '/restaurants/all' ).then( responseRestaurants => {
 
-            this.setState( {
-                Restaurants: responseRestaurants.data
-            } )
-            console.log( this.state )
+        // axios.defaults.headers.common[ "authorization" ] = cookie.load( 'token' )
+        // axios.defaults.withCredentials = true;
+        // axios.get( BACKEND_URL + '/restaurants/all' ).then( responseRestaurants => {
+
+        //     this.setState( {
+        //         Restaurants: responseRestaurants.data
+        //     } )
+        //     console.log( this.state )
 
 
 
-        } ).catch( error => {
-            console.log( "Error in fetching restaurants : ", error );
-        } )
+        // } ).catch( error => {
+        //     console.log( "Error in fetching restaurants : ", error );
+        // } )
 
 
     }
@@ -56,7 +60,7 @@ export class Dashboard extends Component {
         if ( !( cookie.load( "auth" ) && cookie.load( "type" ) === "users" ) ) {
             return <Redirect to='/login' />
         }
-        let searchedRestaurants = this.state.Restaurants.filter( ( restaurant ) => {
+        let searchedRestaurants = this.props.Restaurants.filter( ( restaurant ) => {
             if ( restaurant.name.toLowerCase().includes( this.state.searchInput.toLowerCase() ) || restaurant.restaurantType.toLowerCase().includes( this.state.searchInput.toLowerCase() ) ) {
                 return true
             } else {
@@ -115,4 +119,17 @@ export class Dashboard extends Component {
     }
 }
 
-export default Dashboard
+const matchStateToProps = ( state ) => {
+    return {
+        Restaurants: state.restaurantsReducer.Restaurants,
+    }
+
+}
+
+const matchDispatchToProps = ( dispatch ) => {
+    return {
+        restaurantsActions: ( data ) => dispatch( restaurantsActions( data ) ),
+    }
+}
+
+export default connect( matchStateToProps, matchDispatchToProps )( Dashboard )

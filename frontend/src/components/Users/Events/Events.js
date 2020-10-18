@@ -6,6 +6,10 @@ import IndividualEvent from './IndividualEvent';
 import BACKEND_URL from '../../../config/config';
 import Modal from 'react-modal';
 import RegisteredEvents from './RegisteredEvents';
+import eventsAllAction from '../../../actions/eventsAllAction'
+import { connect } from "react-redux";
+import eventsRegisteredAction from '../../../actions/eventsRegistered';
+
 
 export class Events extends Component {
     constructor( props ) {
@@ -20,39 +24,42 @@ export class Events extends Component {
     }
 
     componentDidMount () {
+
+        this.props.eventsAllAction();
+        this.props.eventsRegisteredAction();
         // getting all events
-        axios.defaults.headers.common[ "authorization" ] = cookie.load( 'token' )
-        axios.defaults.withCredentials = true;
-        axios.get( BACKEND_URL + '/events/' ).then( response => {
-            console.log( "got events", response.data )
-            response.data.map( ( event ) => {
-                this.setState( {
-                    Events: [ ...this.state.Events, event ],
-                } )
+        // axios.defaults.headers.common[ "authorization" ] = cookie.load( 'token' )
+        // axios.defaults.withCredentials = true;
+        // axios.get( BACKEND_URL + '/events/' ).then( response => {
+        //     console.log( "got events", response.data )
+        //     response.data.map( ( event ) => {
+        //         this.setState( {
+        //             Events: [ ...this.state.Events, event ],
+        //         } )
 
-            } )
-            console.log( this.state )
+        //     } )
+        //     console.log( this.state )
 
-        } ).catch( error => {
-            console.log( "Error in fetching restaurant events: ", error );
-        } )
+        // } ).catch( error => {
+        //     console.log( "Error in fetching restaurant events: ", error );
+        // } )
 
         //getting registered events
-        var id = cookie.load( 'id' )
-        axios.defaults.headers.common[ "authorization" ] = cookie.load( 'token' )
-        axios.defaults.withCredentials = true;
-        axios.get( BACKEND_URL + '/events/users/' + id ).then( response => {
-            console.log( "Got registered events" );
-            response.data.map( ( event ) => {
-                this.setState( {
-                    RegisteredEvents: [ ...this.state.RegisteredEvents, event ]
-                } )
-            } )
+        // var id = cookie.load( 'id' )
+        // axios.defaults.headers.common[ "authorization" ] = cookie.load( 'token' )
+        // axios.defaults.withCredentials = true;
+        // axios.get( BACKEND_URL + '/events/users/' + id ).then( response => {
+        //     console.log( "Got registered events" );
+        //     response.data.map( ( event ) => {
+        //         this.setState( {
+        //             RegisteredEvents: [ ...this.state.RegisteredEvents, event ]
+        //         } )
+        //     } )
 
 
-        } ).catch( error => {
-            console.log( "Error in getting registered events: ", error )
-        } )
+        // } ).catch( error => {
+        //     console.log( "Error in getting registered events: ", error )
+        // } )
     }
 
 
@@ -74,7 +81,7 @@ export class Events extends Component {
         if ( !( cookie.load( "auth" ) && cookie.load( "type" ) === "users" ) ) {
             redirectVar = <Redirect to="/login" />
         }
-        let filteredEvents = this.state.Events.filter( ( event ) => {
+        let filteredEvents = this.props.Events.filter( ( event ) => {
             return event.eventName.toLowerCase().includes( this.state.searchInput.toLowerCase() )
         } )
         let sortedEvents = filteredEvents.sort( ( a, b ) => {
@@ -96,7 +103,7 @@ export class Events extends Component {
             )
         } )
 
-        let registeredEvents = this.state.RegisteredEvents.map( event => {
+        let registeredEvents = this.props.RegisteredEvents.map( event => {
             return ( <RegisteredEvents eventData={ event } />
             )
         } )
@@ -147,4 +154,19 @@ export class Events extends Component {
 }
 
 
-export default Events
+const matchStateToProps = ( state ) => {
+    return {
+        Events: state.eventsReducer.Events,
+        RegisteredEvents: state.eventsReducer.RegisteredEvents,
+    }
+
+}
+
+const matchDispatchToProps = ( dispatch ) => {
+    return {
+        eventsAllAction: ( data ) => dispatch( eventsAllAction( data ) ),
+        eventsRegisteredAction: ( data ) => dispatch( eventsRegisteredAction( data ) ),
+    }
+}
+
+export default connect( matchStateToProps, matchDispatchToProps )( Events )

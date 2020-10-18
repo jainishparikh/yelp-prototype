@@ -1,12 +1,13 @@
 import React, { Component } from 'react'
 import { Redirect } from 'react-router';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import cookie from 'react-cookies';
 import axios from 'axios';
 import ReactModal from 'react-modal';
 import BACKEND_URL from '../../../config/config'
 import updateUserProfileAction from '../../../actions/updateUserProfileAction';
 import { connect } from "react-redux";
+import store from "../../../store";
 
 
 export class Profile extends Component {
@@ -14,7 +15,7 @@ export class Profile extends Component {
         super( props )
         if ( this.props.location.state ) {
             this.state = {
-                userID: this.props.location.state.userData.userID,
+                userID: this.props.location.state.userData._id,
                 name: this.props.location.state.userData.name,
                 nickName: this.props.location.state.userData.nickName,
                 email: this.props.location.state.userData.email,
@@ -56,6 +57,8 @@ export class Profile extends Component {
             }
         }
     }
+
+
 
 
     handleOtherChange = inp => {
@@ -101,10 +104,19 @@ export class Profile extends Component {
 
     handleOnSubmit = e => {
         e.preventDefault();
-        console.log( "in handle submit" )
         if ( !this.state.error ) {
-            this.props.updateUserProfileAction( this.state );
+            // console.log( "store", store.getState() )
+            this.props.updateUserProfileAction( this.state ).then( response => {
+                if ( this.props.update ) {
+                    // console.log( "after update profile action" )
+                    this.setState( {
+                        update: this.props.update
+                    } )
+                }
+                // window.location.assign( '/users/about' )
 
+            } );
+            // useHistory().push( '/users/about' )
             // axios.defaults.headers.common[ "authorization" ] = cookie.load( 'token' )
             // axios.defaults.withCredentials = true;
             // axios
@@ -159,7 +171,7 @@ export class Profile extends Component {
     handleImageSubmit = ( e ) => {
         e.preventDefault();
         this.toggleImageUpdate();
-        console.log( this.state.newProfileImage );
+        console.log( this.state.newProfileImage, "image", this.state.userID );
         const formData = new FormData();
         formData.append( 'myImage', this.state.newProfileImage, this.state.newProfileImage.name )
         formData.append( 'userID', this.state.userID )
@@ -168,6 +180,9 @@ export class Profile extends Component {
                 'content-type': 'multipart/form-data'
             }
         }
+        axios.defaults.headers.common[ "authorization" ] = cookie.load( 'token' )
+        axios.defaults.withCredentials = true;
+
         axios
             .post( BACKEND_URL + '/users/uploadpicture', formData, config ).then( ( response ) => {
                 console.log( response.data.filename )
@@ -193,9 +208,11 @@ export class Profile extends Component {
             renderError = <div style={ { 'color': 'red' } }>{ this.state.errorMessage }</div>
         }
 
-        if ( this.props.update ) {
-            window.location.assign( '/users/about' )
-            // redirectVar = <Redirect to='/users/about' />
+        if ( this.state.update ) {
+            // console.log( "in update redirect" )
+            // useHistory().push( '/users/about' )
+            // window.location.assign( '/users/about' )
+            redirectVar = <Redirect to='/users/about' />
         }
         return (
             <div>
@@ -225,15 +242,15 @@ export class Profile extends Component {
                                 <div className="row m-1">
                                     <div className="col-5">
                                         <label>Name:</label>
-                                        <input type="text" className="form-control" name="name"
-                                            placeholder={ this.state.name } onChange={ this.handleInputChange } />
+                                        <input type="text" className="form-control" name="name" value={ this.state.name }
+                                            onChange={ this.handleInputChange } />
 
 
                                     </div>
                                     <div className="col-5">
                                         <label>Nick Name:</label>
                                         <input type="text" className="form-control" name="nickName"
-                                            placeholder={ this.state.nickName } onChange={ this.handleOtherChange } />
+                                            value={ this.state.nickName } onChange={ this.handleOtherChange } />
 
                                     </div>
                                 </div>
@@ -242,7 +259,7 @@ export class Profile extends Component {
                                     <div className="col-10">
                                         <label>Email:</label>
                                         <input type="text" className="form-control" name="email"
-                                            placeholder={ this.state.email } onChange={ this.handleEmailChange } />
+                                            value={ this.state.email } onChange={ this.handleEmailChange } />
                                     </div>
 
                                 </div>
@@ -250,34 +267,34 @@ export class Profile extends Component {
                                     <div className="col-5">
                                         <label>Contact Number:</label>
                                         <input type="text" className="form-control" name="contactNumber"
-                                            placeholder={ this.state.contactNumber } onChange={ this.handleInputChange } />
+                                            value={ this.state.contactNumber } onChange={ this.handleInputChange } />
 
 
                                     </div>
                                     <div className="col-5">
-                                        <label>Date Of Birth: (YYYY-MM-DD)</label>
+                                        <label>Date Of Birth: </label>
                                         <input type="date" className="form-control" name="dateOfBirth"
-                                            placeholder={ this.state.dateOfBirth } onChange={ this.handleOtherChange } />
+                                            value={ this.state.dateOfBirth } onChange={ this.handleOtherChange } />
                                     </div>
                                 </div>
                                 <div className="row m-1">
                                     <div className="col-3">
                                         <label>City:</label>
                                         <input type="text" className="form-control" name="city"
-                                            placeholder={ this.state.city } onChange={ this.handleInputChange } />
+                                            value={ this.state.city } onChange={ this.handleInputChange } />
 
 
                                     </div>
                                     <div className="col-3">
                                         <label>State:</label>
                                         <input type="text" className="form-control" name="state"
-                                            placeholder={ this.state.state } onChange={ this.handleInputChange } />
+                                            value={ this.state.state } onChange={ this.handleInputChange } />
 
                                     </div>
                                     <div className="col-3">
                                         <label>Country:</label>
                                         <input type="text" className="form-control" name="country"
-                                            placeholder={ this.state.country } onChange={ this.handleInputChange } />
+                                            value={ this.state.country } onChange={ this.handleInputChange } />
 
 
                                     </div>
@@ -294,7 +311,7 @@ export class Profile extends Component {
                                     <div className="col-10">
                                         <label>Things I Love:</label>
                                         <input type="text" className="form-control" name="thingsILove"
-                                            placeholder={ this.state.thingsILove } onChange={ this.handleOtherChange } />
+                                            value={ this.state.thingsILove } onChange={ this.handleOtherChange } />
                                     </div>
 
                                 </div>
@@ -302,7 +319,7 @@ export class Profile extends Component {
                                     <div className="col-10">
                                         <label>Yelping Since:</label>
                                         <input type="text" className="form-control" name="yelpingSince"
-                                            placeholder={ this.state.yelpingSince } onChange={ this.handleInputChange } />
+                                            value={ this.state.yelpingSince } onChange={ this.handleInputChange } />
                                     </div>
 
                                 </div>
@@ -310,7 +327,7 @@ export class Profile extends Component {
                                     <div className="col-10">
                                         <label>Blog Link:</label>
                                         <input type="text" className="form-control" name="blogLink"
-                                            placeholder={ this.state.blogLink } onChange={ this.handleOtherChange } />
+                                            value={ this.state.blogLink } onChange={ this.handleOtherChange } />
                                     </div>
 
                                 </div>
@@ -337,8 +354,7 @@ export class Profile extends Component {
 const matchStateToProps = ( state ) => {
 
     return {
-        update: state.getUserProfileReducer.update,
-        message: state.getUserProfileReducer.message,
+        update: state.getUserProfileReducer.update
     }
 
 }

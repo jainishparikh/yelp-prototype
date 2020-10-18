@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import cookie from 'react-cookies';
 import axios from 'axios';
 import BACKEND_URL from '../../../config/config'
+import { connect } from "react-redux";
 
 export class EventRegistrations extends Component {
     constructor( props ) {
@@ -19,22 +20,12 @@ export class EventRegistrations extends Component {
         }
     }
     componentDidMount () {
-        var id = cookie.load( 'id' )
-        axios.defaults.headers.common[ "authorization" ] = cookie.load( 'token' )
-        axios.defaults.withCredentials = true;
-        axios.get( BACKEND_URL + '/events/users/' + id ).then( response => {
-            console.log( "Got registered events", response );
-            let exist = response.data.some( event => event._id === this.state.eventID )
-            if ( exist ) {
-                this.setState( {
-                    registered: true
-                } )
-            }
-
-
-        } ).catch( error => {
-            console.log( "Error in getting registered events: ", error )
-        } )
+        let exist = this.props.RegisteredEvents.some( event => event._id === this.state.eventID )
+        if ( exist ) {
+            this.setState( {
+                registered: true
+            } )
+        }
 
     }
     handleRegistration = ( e ) => {
@@ -100,4 +91,13 @@ export class EventRegistrations extends Component {
     }
 }
 
-export default EventRegistrations
+const matchStateToProps = ( state ) => {
+    return {
+        Events: state.eventsReducer.Events,
+        RegisteredEvents: state.eventsReducer.RegisteredEvents,
+    }
+
+}
+
+export default connect( matchStateToProps )( EventRegistrations )
+

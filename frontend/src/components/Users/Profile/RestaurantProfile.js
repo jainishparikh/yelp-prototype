@@ -12,6 +12,9 @@ import profile_picture from '../../../images/restaurant.jpeg';
 import AddReview from '../Reviews/AddReview'
 import ReactPaginate from 'react-paginate';
 import '../../../css/pagination.css';
+import { connect } from "react-redux";
+
+
 
 export class RestaurantProfile extends Component {
     constructor( props ) {
@@ -38,39 +41,59 @@ export class RestaurantProfile extends Component {
     }
     componentDidMount () {
         let email = this.props.match.params.restaurantEmail
-        axios.defaults.headers.common[ "authorization" ] = cookie.load( 'token' )
-        axios.defaults.withCredentials = true;
-        axios.get( BACKEND_URL + '/restaurants/about/' + email ).then( ( response ) => {
-            console.log( response )
-            if ( response.status === 200 ) {
-                console.log( "got data" )
-                let imagePath = BACKEND_URL + "/images/profilepics/" + response.data.profilePicture
-                if ( response.data.profilePicture === null || response.data.profilePicture === "" ) {
-                    console.log( "inside imagepath null" )
-                    imagePath = profile_picture
-                }
-                this.setState( {
-                    restaurantID: response.data._id,
-                    name: response.data.name,
-                    email: response.data.email,
-                    contact: response.data.contact,
-                    location: response.data.location,
-                    description: response.data.description,
-                    timing: response.data.timing,
-                    profileImagePath: imagePath,
-                    dishes: response.data.dishes,
-                    pageCount: Math.ceil( response.data.dishes.length / this.state.perPage )
-
-                } )
+        let restaurant = this.props.Restaurants.map( restaurant => {
+            let imagePath = BACKEND_URL + "/images/profilepics/" + restaurant.profilePicture
+            if ( restaurant.profilePicture === null || restaurant.profilePicture === "" ) {
+                console.log( "inside imagepath null" )
+                imagePath = profile_picture
             }
+            if ( restaurant.email === email )
+                this.setState( {
+                    restaurantID: restaurant._id,
+                    name: restaurant.name,
+                    email: restaurant.email,
+                    contact: restaurant.contact,
+                    location: restaurant.location,
+                    description: restaurant.description,
+                    timing: restaurant.timing,
+                    profileImagePath: imagePath,
+                    dishes: restaurant.dishes,
+                    pageCount: Math.ceil( restaurant.dishes.length / this.state.perPage )
+                } )
+        } )
+        // axios.defaults.headers.common[ "authorization" ] = cookie.load( 'token' )
+        // axios.defaults.withCredentials = true;
+        // axios.get( BACKEND_URL + '/restaurants/about/' + email ).then( ( response ) => {
+        //     console.log( response )
+        //     if ( response.status === 200 ) {
+        //         console.log( "got data" )
+        //         let imagePath = BACKEND_URL + "/images/profilepics/" + response.data.profilePicture
+        //         if ( response.data.profilePicture === null || response.data.profilePicture === "" ) {
+        //             console.log( "inside imagepath null" )
+        //             imagePath = profile_picture
+        //         }
+        //         this.setState( {
+        //             restaurantID: response.data._id,
+        //             name: response.data.name,
+        //             email: response.data.email,
+        //             contact: response.data.contact,
+        //             location: response.data.location,
+        //             description: response.data.description,
+        //             timing: response.data.timing,
+        //             profileImagePath: imagePath,
+        //             dishes: response.data.dishes,
+        //             pageCount: Math.ceil( response.data.dishes.length / this.state.perPage )
 
-        } ).catch( ( err ) => {
-            console.log( " error getting restaurant data" )
-            this.setState( {
-                error: true
-            } )
+        //         } )
+        //     }
 
-        } );
+        // } ).catch( ( err ) => {
+        //     console.log( " error getting restaurant data" )
+        //     this.setState( {
+        //         error: true
+        //     } )
+
+        // } );
     }
 
     //change state to toggle review popup
@@ -237,4 +260,12 @@ export class RestaurantProfile extends Component {
 
 }
 
-export default RestaurantProfile
+const matchStateToProps = ( state ) => {
+    return {
+        Restaurants: state.restaurantsReducer.Restaurants,
+    }
+
+}
+
+export default connect( matchStateToProps )( RestaurantProfile )
+

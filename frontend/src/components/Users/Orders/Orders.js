@@ -6,6 +6,8 @@ import IndividualOrder from './IndividualOrder';
 import { Redirect } from 'react-router';
 import '../../../css/pagination.css';
 import ReactPaginate from 'react-paginate';
+import orderFetchAction from '../../../actions/orderFetchAction'
+import { connect } from "react-redux";
 
 export class Orders extends Component {
     constructor( props ) {
@@ -14,30 +16,31 @@ export class Orders extends Component {
             Orders: [],
             orderStatusFilter: "All",
             offset: 0,
-            perPage: 2,
+            perPage: 5,
             pageCount: 0
 
         }
     }
     componentDidMount () {
-        var userID = cookie.load( 'id' )
-        axios.defaults.headers.common[ "authorization" ] = cookie.load( 'token' )
-        axios.defaults.withCredentials = true;
-        axios.get( BACKEND_URL + '/orders/users/' + userID ).then( response => {
-            if ( response.status === 200 ) {
-                response.data.map( order => {
-                    this.setState( {
-                        Orders: [ ...this.state.Orders, order ],
-                        pageCount: Math.ceil( response.data.length / this.state.perPage )
+        this.props.orderFetchAction( this.state.perPage )
+        // var userID = cookie.load( 'id' )
+        // axios.defaults.headers.common[ "authorization" ] = cookie.load( 'token' )
+        // axios.defaults.withCredentials = true;
+        // axios.get( BACKEND_URL + '/orders/users/' + userID ).then( response => {
+        //     if ( response.status === 200 ) {
+        //         response.data.map( order => {
+        //             this.setState( {
+        //                 Orders: [ ...this.state.Orders, order ],
+        //                 pageCount: Math.ceil( response.data.length / this.state.perPage )
 
-                    } )
-                } )
-                console.log( "Orders", this.state );
+        //             } )
+        //         } )
+        //         console.log( "Orders", this.state );
 
-            }
-        } ).catch( error => {
-            console.log( "Error in fetching orders: ", error );
-        } )
+        //     }
+        // } ).catch( error => {
+        //     console.log( "Error in fetching orders: ", error );
+        // } )
 
     }
 
@@ -59,16 +62,16 @@ export class Orders extends Component {
 
     render () {
         let redirectVar = null
-        let pageCount = this.state.pageCount
+        let pageCount = this.props.pageCount
         if ( !( cookie.load( "auth" ) && cookie.load( "type" ) === "users" ) ) {
             redirectVar = <Redirect to="/login" />
         }
 
-        let filteredOrders = this.state.Orders.filter( order => this.state.orderStatusFilter === "All" || order.orderStatus === this.state.orderStatusFilter )
+        let filteredOrders = this.props.Orders.filter( order => this.state.orderStatusFilter === "All" || order.orderStatus === this.state.orderStatusFilter )
         pageCount = Math.ceil( filteredOrders.length / this.state.perPage )
         let sortedOrders = filteredOrders.sort( ( a, b ) => b.orderDate.localeCompare( a.orderDate ) )
         let displayOrder = sortedOrders.slice( this.state.offset, this.state.offset + this.state.perPage ).map( ( order ) => {
-            console.log( "in orders", order._id )
+
             return (
                 <div>
                     <IndividualOrder key={ order._id } orderData={ order } />
@@ -125,5 +128,19 @@ export class Orders extends Component {
         )
     }
 }
+const matchStateToProps = ( state ) => {
+    return {
+        Orders: state.orderReducer.Orders,
+        pageCount: state.orderReducer.pageCount,
+    }
 
-export default Orders
+}
+
+const matchDispatchToProps = ( dispatch ) => {
+    return {
+        orderFetchAction: ( data ) => dispatch( orderFetchAction( data ) ),
+    }
+}
+
+export default connect( matchStateToProps, matchDispatchToProps )( Orders )
+

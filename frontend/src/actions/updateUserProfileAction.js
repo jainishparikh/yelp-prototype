@@ -39,7 +39,7 @@ var def = () => {
 var updateUserProfileAction = ( data ) => ( dispatch ) => {
     axios.defaults.headers.common[ "authorization" ] = cookie.load( 'token' )
     axios.defaults.withCredentials = true;
-    axios
+    return axios
         .put( BACKEND_URL + "/users/about", data ).then( response => {
             if ( response.status === 200 ) {
 
@@ -63,6 +63,7 @@ var updateUserProfileAction = ( data ) => ( dispatch ) => {
                         maxAge: 90000
                     } )
                 }
+
                 dispatch( success( response ) )
                 // window.location.assign( "/users/about" );
             }
