@@ -91,10 +91,10 @@ export class Navbar extends Component {
                         <div class="collapse navbar-collapse" id="navbarNav">
                             <ul class="navbar-nav ml-auto" >
                                 <li class="nav-item" >
-                                    <Link class="nav-link" to="/login" style={ { color: 'white' } }>Login</Link>
+                                    <a class="nav-link" href="/login" style={ { color: 'white' } }>Login</a>
                                 </li>
                                 <li class="nav-item">
-                                    <Link class="nav-link" to="/signup" style={ { color: 'white' } }>Signup</Link>
+                                    <a class="nav-link" href="/signup" style={ { color: 'white' } }>Signup</a>
                                 </li>
                             </ul>
                         </div>

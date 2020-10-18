@@ -5,7 +5,9 @@ import axios from 'axios';
 import cookie from "react-cookies";
 import BACKEND_URL from '../../config/config'
 import yelp_image from '../../images/yelp-login.png'
-import jwt_decode from "jwt-decode"
+import jwt_decode from "jwt-decode";
+import loginAction from '../../actions/loginAction';
+import { connect } from "react-redux";
 
 export class Login extends Component {
     constructor( props ) {
@@ -18,6 +20,7 @@ export class Login extends Component {
             errorMessage: '',
         }
     }
+
 
     handlePasswordChange = inp => {
         this.setState( {
@@ -68,70 +71,70 @@ export class Login extends Component {
                 errorMessage: "Please Select User or Restaurant"
             } )
         } else {
+            this.props.loginAction( this.state )
+            // var backend_path = '';
+            // if ( this.state.type === 'users' ) {
+            //     backend_path = '/users/login'
+            // } else if ( this.state.type === 'restaurants' ) {
+            //     backend_path = '/restaurants/login'
+            // }
+            // console.log( this.state );
+            // console.log( BACKEND_URL + backend_path )
+            // axios
+            //     .post( BACKEND_URL + backend_path, this.state )
+            //     .then( ( response ) => {
+            //         if ( response.status === 200 ) {
+            //             this.setState( {
+            //                 error: false
+            //             } )
+            //             console.log( "resdat", response.data.split( ' ' )[ 1 ] )
+            //             let decoded = jwt_decode( response.data.split( ' ' )[ 1 ] )
 
-            var backend_path = '';
-            if ( this.state.type === 'users' ) {
-                backend_path = '/users/login'
-            } else if ( this.state.type === 'restaurants' ) {
-                backend_path = '/restaurants/login'
-            }
-            console.log( this.state );
-            console.log( BACKEND_URL + backend_path )
-            axios
-                .post( BACKEND_URL + backend_path, this.state )
-                .then( ( response ) => {
-                    if ( response.status === 200 ) {
-                        this.setState( {
-                            error: false
-                        } )
-                        console.log( "resdat", response.data.split( ' ' )[ 1 ] )
-                        let decoded = jwt_decode( response.data.split( ' ' )[ 1 ] )
+            //             console.log( "decoded", decoded )
+            //             cookie.save( "auth", true, {
+            //                 path: '/',
+            //                 httpOnly: false,
+            //                 maxAge: 90000
+            //             } )
+            //             cookie.save( "token", response.data, {
+            //                 path: '/',
+            //                 httpOnly: false,
+            //                 maxAge: 90000
+            //             } )
+            //             cookie.save( "id", decoded._id, {
+            //                 path: '/',
+            //                 httpOnly: false,
+            //                 maxAge: 90000
+            //             } )
+            //             cookie.save( "name", decoded.name, {
+            //                 path: '/',
+            //                 httpOnly: false,
+            //                 maxAge: 90000
+            //             } )
+            //             cookie.save( "email", decoded.email, {
+            //                 path: '/',
+            //                 httpOnly: false,
+            //                 maxAge: 90000
+            //             } )
+            //             cookie.save( "type", decoded.type, {
+            //                 path: '/',
+            //                 httpOnly: false,
+            //                 maxAge: 90000
+            //             } )
+            //             if ( this.state.type === 'users' ) {
+            //                 window.location.assign( '/users/dashboard' );
+            //             } else if ( this.state.type === 'restaurants' ) {
+            //                 window.location.assign( '/restaurants/about' );
+            //             }
+            //         }
+            //     } )
+            //     .catch( ( err ) => {
+            //         this.setState( {
+            //             error: true,
+            //             errorMessage: "Invalid Credentials"
+            //         } )
 
-                        console.log( "decoded", decoded )
-                        cookie.save( "auth", true, {
-                            path: '/',
-                            httpOnly: false,
-                            maxAge: 90000
-                        } )
-                        cookie.save( "token", response.data, {
-                            path: '/',
-                            httpOnly: false,
-                            maxAge: 90000
-                        } )
-                        cookie.save( "id", decoded._id, {
-                            path: '/',
-                            httpOnly: false,
-                            maxAge: 90000
-                        } )
-                        cookie.save( "name", decoded.name, {
-                            path: '/',
-                            httpOnly: false,
-                            maxAge: 90000
-                        } )
-                        cookie.save( "email", decoded.email, {
-                            path: '/',
-                            httpOnly: false,
-                            maxAge: 90000
-                        } )
-                        cookie.save( "type", decoded.type, {
-                            path: '/',
-                            httpOnly: false,
-                            maxAge: 90000
-                        } )
-                        if ( this.state.type === 'users' ) {
-                            window.location.assign( '/users/dashboard' );
-                        } else if ( this.state.type === 'restaurants' ) {
-                            window.location.assign( '/restaurants/about' );
-                        }
-                    }
-                } )
-                .catch( ( err ) => {
-                    this.setState( {
-                        error: true,
-                        errorMessage: "Invalid Credentials"
-                    } )
-
-                } );
+            //     } );
         }
     };
 
@@ -145,8 +148,8 @@ export class Login extends Component {
             return <Redirect to='/restaurants/about' />
         }
         let renderError = null
-        if ( this.state.error ) {
-            renderError = <div style={ { 'color': 'red' } }>{ this.state.errorMessage }</div>
+        if ( this.props.error ) {
+            renderError = <div style={ { 'color': 'red' } }>{ this.props.message }</div>
         }
         return (
             <div>
@@ -184,7 +187,7 @@ export class Login extends Component {
                                 </form>
                                 { renderError }
                                 <br></br>
-                                Don't have an account? { <Link style={ { 'color': 'red' } } to="/signup">Sign Up</Link> }
+                                Don't have an account? { <a style={ { 'color': 'red' } } href="/signup">Sign Up</a> }
                             </div>
 
                         </div>
@@ -207,5 +210,19 @@ export class Login extends Component {
         )
     }
 }
+const matchStateToProps = ( state ) => {
+    console.log( "inside matchStatetoProps", state )
+    return {
+        error: state.loginReducer.error,
+        message: state.loginReducer.message
+    }
 
-export default Login
+}
+
+const matchDispatchToProps = ( dispatch ) => {
+    return {
+        loginAction: ( data ) => dispatch( loginAction( data ) ),
+    }
+}
+
+export default connect( matchStateToProps, matchDispatchToProps )( Login )

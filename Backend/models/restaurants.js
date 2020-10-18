@@ -14,7 +14,7 @@ var dishesSchema = new Schema( {
 
 var restaurantsSchema = new Schema( {
     name: String,
-    email: String,
+    email: { type: String, unique: true },
     password: String,
     location: String,
     description: String,

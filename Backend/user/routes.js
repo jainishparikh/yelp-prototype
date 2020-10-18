@@ -143,7 +143,7 @@ router.put( '/about', checkAuth, ( req, res ) => {
                 thingsILove: req.body.thingsILove,
                 blogLink: req.body.blogLink
             }
-        }
+        }, { new: true }
     ).then( response => {
         console.log( "Update successfull" )
         res.status( 200 ).send( response )

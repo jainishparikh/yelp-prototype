@@ -5,6 +5,8 @@ import cookie from 'react-cookies';
 import axios from 'axios';
 import ReactModal from 'react-modal';
 import BACKEND_URL from '../../../config/config'
+import updateUserProfileAction from '../../../actions/updateUserProfileAction';
+import { connect } from "react-redux";
 
 
 export class Profile extends Component {
@@ -28,7 +30,8 @@ export class Profile extends Component {
                 profileImageUpdate: false,
                 newProfileImage: "",
                 profileImagePath: "",
-                error: false
+                error: false,
+                update: false
             }
         } else {
             this.state = {
@@ -48,10 +51,12 @@ export class Profile extends Component {
                 profileImageUpdate: false,
                 newProfileImage: "",
                 profileImagePath: "",
-                error: false
+                error: false,
+                update: false
             }
         }
     }
+
 
     handleOtherChange = inp => {
         // console.log( inp.target.name, inp.target.value );
@@ -98,38 +103,40 @@ export class Profile extends Component {
         e.preventDefault();
         console.log( "in handle submit" )
         if ( !this.state.error ) {
-            axios.defaults.headers.common[ "authorization" ] = cookie.load( 'token' )
-            axios.defaults.withCredentials = true;
-            axios
-                .put( BACKEND_URL + "/users/about", this.state ).then( response => {
-                    if ( response.status === 200 ) {
+            this.props.updateUserProfileAction( this.state );
 
-                        if ( cookie.load( 'email' ) !== this.state.email ) {
-                            cookie.remove( "email", {
-                                path: '/'
-                            } );
-                            cookie.save( "email", this.state.email, {
-                                path: '/',
-                                httpOnly: false,
-                                maxAge: 90000
-                            } )
-                        }
-                        if ( cookie.load( 'name' ) !== this.state.name ) {
-                            cookie.remove( "name", {
-                                path: '/'
-                            } );
-                            cookie.save( "name", this.state.name, {
-                                path: '/',
-                                httpOnly: false,
-                                maxAge: 90000
-                            } )
-                        }
-                        window.location.assign( "/users/about" );
-                    }
+            // axios.defaults.headers.common[ "authorization" ] = cookie.load( 'token' )
+            // axios.defaults.withCredentials = true;
+            // axios
+            //     .put( BACKEND_URL + "/users/about", this.state ).then( response => {
+            //         if ( response.status === 200 ) {
 
-                } ).catch( err => {
-                    console.log( "error in updating profile" );
-                } )
+            //             if ( cookie.load( 'email' ) !== this.state.email ) {
+            //                 cookie.remove( "email", {
+            //                     path: '/'
+            //                 } );
+            //                 cookie.save( "email", this.state.email, {
+            //                     path: '/',
+            //                     httpOnly: false,
+            //                     maxAge: 90000
+            //                 } )
+            //             }
+            //             if ( cookie.load( 'name' ) !== this.state.name ) {
+            //                 cookie.remove( "name", {
+            //                     path: '/'
+            //                 } );
+            //                 cookie.save( "name", this.state.name, {
+            //                     path: '/',
+            //                     httpOnly: false,
+            //                     maxAge: 90000
+            //                 } )
+            //             }
+            //             window.location.assign( "/users/about" );
+            //         }
+
+            //     } ).catch( err => {
+            //         console.log( "error in updating profile" );
+            //     } )
         }
 
     }
@@ -184,6 +191,11 @@ export class Profile extends Component {
         let renderError = null
         if ( this.state.error ) {
             renderError = <div style={ { 'color': 'red' } }>{ this.state.errorMessage }</div>
+        }
+
+        if ( this.props.update ) {
+            window.location.assign( '/users/about' )
+            // redirectVar = <Redirect to='/users/about' />
         }
         return (
             <div>
@@ -322,4 +334,19 @@ export class Profile extends Component {
     }
 }
 
-export default Profile
+const matchStateToProps = ( state ) => {
+
+    return {
+        update: state.getUserProfileReducer.update,
+        message: state.getUserProfileReducer.message,
+    }
+
+}
+
+const matchDispatchToProps = ( dispatch ) => {
+    return {
+        updateUserProfileAction: ( data ) => dispatch( updateUserProfileAction( data ) ),
+    }
+}
+
+export default connect( matchStateToProps, matchDispatchToProps )( Profile )

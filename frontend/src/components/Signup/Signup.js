@@ -1,9 +1,12 @@
 import React, { Component } from 'react';
 import axios from 'axios';
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 import BACKEND_URL from '../../config/config';
-
 import yelp_image from '../../images/yelp-login.png'
+import { connect } from "react-redux";
+import SignUpAction from '../../actions/SignUpAction';
+
+
 export class Signup extends Component {
     constructor( props ) {
         super( props );
@@ -70,40 +73,40 @@ export class Signup extends Component {
             } )
         } else {
 
+            this.props.SignUpAction( this.state )
+            // if ( this.state.type === 'users' ) {
+            //     axios
+            //         .post( BACKEND_URL + '/users/signup', this.state )
+            //         .then( ( response ) => {
+            //             if ( response.status === 200 ) {
+            //                 window.location.assign( '/login' )
+            //             }
 
-            if ( this.state.type === 'users' ) {
-                axios
-                    .post( BACKEND_URL + '/users/signup', this.state )
-                    .then( ( response ) => {
-                        if ( response.status === 200 ) {
-                            window.location.assign( '/login' )
-                        }
+            //         } )
+            //         .catch( ( err ) => {
+            //             this.setState( {
+            //                 error: true
+            //             } )
 
-                    } )
-                    .catch( ( err ) => {
-                        this.setState( {
-                            error: true
-                        } )
+            //         } );
+            // } else if ( this.state.type === 'restaurants' ) {
+            //     axios
+            //         .post( BACKEND_URL + '/restaurants/signup', this.state )
+            //         .then( ( response ) => {
+            //             console.log( response )
+            //             if ( response.status === 200 ) {
+            //                 console.log( "redirecting to login" )
+            //                 window.location.assign( '/login' )
+            //             }
 
-                    } );
-            } else if ( this.state.type === 'restaurants' ) {
-                axios
-                    .post( BACKEND_URL + '/restaurants/signup', this.state )
-                    .then( ( response ) => {
-                        console.log( response )
-                        if ( response.status === 200 ) {
-                            console.log( "redirecting to login" )
-                            window.location.assign( '/login' )
-                        }
+            //         } ).catch( ( err ) => {
+            //             console.log( "inside restaurant error" )
+            //             this.setState( {
+            //                 error: true
+            //             } )
 
-                    } ).catch( ( err ) => {
-                        console.log( "inside restaurant error" )
-                        this.setState( {
-                            error: true
-                        } )
-
-                    } );
-            }
+            //         } );
+            // }
         }
     };
 
@@ -119,12 +122,17 @@ export class Signup extends Component {
 
     render () {
         let renderError = null
-        if ( this.state.error ) {
-            renderError = <div style={ { 'color': 'red' } }>{ this.state.errorMessage }</div>
+        let redirectVar = null
+        if ( this.props.error ) {
+            renderError = <div style={ { 'color': 'red' } }>{ this.props.message }</div>
+        }
+        if ( this.props.auth ) {
+            redirectVar = <Redirect to="/login" />
         }
         return (
-            <div>
 
+            <div>
+                {redirectVar }
                 <div className="row" style={ { height: "100vh", "padding": "10%" } }>
                     <div className="col-5" style={ { "paddingLeft": "10%" } }>
                         <div className='row' style={ { "height": "10%" } }></div>
@@ -164,7 +172,7 @@ export class Signup extends Component {
                                 </form>
                                 { renderError }
                                 <br></br>
-                                Already have an account? { <Link style={ { "color": "red" } } to="/login">Login</Link> }
+                                Already have an account? { <a style={ { "color": "red" } } href="/login">Login</a> }
                             </div>
                         </div>
                     </div>
@@ -183,4 +191,20 @@ export class Signup extends Component {
     }
 }
 
-export default Signup
+const matchStateToProps = ( state ) => {
+    console.log( "inside matchStatetoProps", state )
+    return {
+        auth: state.SignUpReducer.auth,
+        error: state.SignUpReducer.error,
+        message: state.SignUpReducer.message
+    }
+
+}
+
+const matchDispatchToProps = ( dispatch ) => {
+    return {
+        SignUpAction: ( data ) => dispatch( SignUpAction( data ) ),
+    }
+}
+
+export default connect( matchStateToProps, matchDispatchToProps )( Signup )
