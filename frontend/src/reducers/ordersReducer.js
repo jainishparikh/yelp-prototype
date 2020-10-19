@@ -1,6 +1,7 @@
 let initialState = {
     Orders: [],
-    orderPlaced: false
+    orderPlaced: false,
+
 }
 var orders = ( state = initialState, action ) => {
     // console.log( state );
@@ -22,6 +23,30 @@ var orders = ( state = initialState, action ) => {
         case "order_failed":
             state.error = true;
             state.message = "Failed Placing Order"
+            return state;
+        case "order_cancel_success":
+            let temp = []
+            for ( let i = 0; i < state.Orders.length; i++ ) {
+                if ( state.Orders[ i ]._id === action.payload.response.data._id ) {
+                    temp.push( action.payload.response.data )
+                } else {
+                    temp.push( state.Orders[ i ] )
+                }
+            }
+            // state.Orders.map( order => {
+            //     if ( order._id === action.payload.orderID ) {
+            //         order.orderStatus = "Cancel"
+            //         order.cancelled = "Yes"
+
+            //     }
+            // } )
+            state.Orders = temp
+            console.log( "state.temp", temp )
+            state.message = "Order Cancelled";
+            return state;
+        case "order_cancel_failed":
+            state.error = true;
+            state.message = "Failed canceling Order"
             return state;
 
         default:

@@ -5,7 +5,8 @@ import BACKEND_URL from '../../../config/config';
 import Modal from 'react-modal';
 import profile_picture from '../../../images/restaurant.jpeg';
 import cookie from 'react-cookies';
-
+import orderCancelAction from '../../../actions/orderCancelActions'
+import { connect } from "react-redux";
 
 
 export class IndividualOrder extends Component {
@@ -19,15 +20,14 @@ export class IndividualOrder extends Component {
     }
 
     componentDidMount () {
+        console.log( "this.props.orderData", this.props.orderData )
         var restaurantID = this.props.orderData.restaurantID
-        console.log( "orderData", this.props.orderData )
-        console.log( "resid", restaurantID )
         return axios.get( BACKEND_URL + '/restaurants/aboutbyID/' + restaurantID ).then( response => {
 
             this.setState( {
                 restaurantData: response.data
             } )
-            console.log( this.state.restaurantData )
+            // console.log( this.state.restaurantData )
 
         } ).catch( error => {
             console.log( "Erron in fetching restaurant data", error )
@@ -54,22 +54,27 @@ export class IndividualOrder extends Component {
     }
     cancelOrder = () => {
         var orderID = this.props.orderData._id
-        var data = {
+        let Stat = {
             orderStatus: 'Cancel'
         }
-        console.log( orderID )
-        axios.defaults.headers.common[ "authorization" ] = cookie.load( 'token' )
-        axios.defaults.withCredentials = true;
-        axios.put( BACKEND_URL + '/orders/users/cancel/' + orderID, data ).then( response => {
-            this.setState( {
-                cancelled: true
-            } )
-            console.log( "Updated and Cancelled" )
-            window.location.reload();
+        console.log( "stat", Stat )
+        // this.props.cancel( orderID, data )
+        this.props.orderCancelAction( orderID, Stat )
+        // .then( response => {
+        //     console.log( "this.props.Orders inside Indi", this.props.Orders )
+        // } )
+        // axios.defaults.headers.common[ "authorization" ] = cookie.load( 'token' )
+        // axios.defaults.withCredentials = true;
+        // axios.put( BACKEND_URL + '/orders/users/cancel/' + orderID, data ).then( response => {
+        //     this.setState( {
+        //         cancelled: true
+        //     } )
+        //     console.log( "Updated and Cancelled" )
+        //     window.location.reload();
 
-        } ).catch( error => {
-            console.log( "Error in updating status: ", error )
-        } )
+        // } ).catch( error => {
+        //     console.log( "Error in updating status: ", error )
+        // } )
     }
 
     render () {
@@ -170,5 +175,18 @@ export class IndividualOrder extends Component {
         )
     }
 }
+const matchStateToProps = ( state ) => {
+    return {
+        Orders: state.orderReducer.Orders,
+    }
 
-export default IndividualOrder
+}
+
+const matchDispatchToProps = ( dispatch ) => {
+    return {
+        orderCancelAction: ( orderID, data ) => dispatch( orderCancelAction( orderID, data ) ),
+    }
+}
+
+export default connect( matchStateToProps, matchDispatchToProps )( IndividualOrder )
+

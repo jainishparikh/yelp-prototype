@@ -140,12 +140,12 @@ export class Login extends Component {
 
 
     render () {
-
+        let redirectVar = null
         if ( cookie.load( 'auth' ) && cookie.load( 'type' ) === 'users' ) {
-            return <Redirect to='/users/dashboard' />
+            redirectVar = <Redirect to='/users/dashboard' />
         }
         else if ( cookie.load( 'auth' ) && cookie.load( 'type' ) === 'restaurants' ) {
-            return <Redirect to='/restaurants/about' />
+            redirectVar = <Redirect to='/restaurants/about' />
         }
         let renderError = null
         if ( this.props.error ) {
@@ -153,7 +153,7 @@ export class Login extends Component {
         }
         return (
             <div>
-
+                {redirectVar }
                 <div className="row" style={ { height: "100vh", "padding": "10%" } }>
 
                     <div className="col-5" style={ { "paddingLeft": "10%" } }>

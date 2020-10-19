@@ -7,6 +7,7 @@ import { Redirect } from 'react-router';
 import '../../../css/pagination.css';
 import ReactPaginate from 'react-paginate';
 import orderFetchAction from '../../../actions/orderFetchAction'
+// import orderCancelAction from '../../../actions/orderCancelActions'
 import { connect } from "react-redux";
 
 export class Orders extends Component {
@@ -59,6 +60,12 @@ export class Orders extends Component {
         } )
 
     };
+
+    // cancelOrder = ( orderID, data ) => {
+    //     this.props.orderCancelAction( orderID, data ).then( response => {
+    //         console.log( "this.props.Orders inside Indi", this.props.Orders )
+    //     } )
+    // }
 
     render () {
         let redirectVar = null
@@ -139,6 +146,7 @@ const matchStateToProps = ( state ) => {
 const matchDispatchToProps = ( dispatch ) => {
     return {
         orderFetchAction: ( data ) => dispatch( orderFetchAction( data ) ),
+        // orderCancelAction: ( data ) => dispatch( orderCancelAction( data ) )
     }
 }
 

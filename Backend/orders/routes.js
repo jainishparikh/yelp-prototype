@@ -26,7 +26,7 @@ router.get( '/restaurants/:id', checkAuth, ( req, res ) => {
 router.get( '/users/:id', checkAuth, ( req, res ) => {
 
     orderSchema.find( { userID: req.params.id } ).then( docs => {
-        console.log( "Orders by Restaurant", docs )
+        console.log( "Orders by users-------------------------------", docs )
         res.status( 200 ).send( JSON.stringify( docs ) )
     } ).catch( error => {
         console.log( "Error in Orders by Restaurant", error )
@@ -88,9 +88,9 @@ router.put( '/restaurants/update/:id', checkAuth, ( req, res ) => {
 
 //update/cancel order status by restaurant
 router.put( '/users/cancel/:id', checkAuth, ( req, res ) => {
-
+    console.log( "body", req.body )
     orderSchema.findOneAndUpdate( { _id: req.params.id },
-        { $set: { orderStatus: req.body.orderStatus, cancelled: "Yes" } }
+        { $set: { orderStatus: req.body.orderStatus, cancelled: "Yes" } }, { new: true }
     ).then( response => {
         console.log( "Update/Cancel success", response )
         res.status( 200 ).send( response )

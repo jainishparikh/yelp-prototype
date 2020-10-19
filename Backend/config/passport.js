@@ -11,7 +11,7 @@ function auth () {
     opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
     opts.secretOrKey = secret;
     passport.use( new JwtStrategy( opts, function ( jwt_payload, callback ) {
-        console.log( "JWT payload received", jwt_payload );
+        // console.log( "JWT payload received", jwt_payload );
 
         if ( jwt_payload.type == "users" ) {
             users.findOne( { email: jwt_payload.email }, function ( err, user ) {
