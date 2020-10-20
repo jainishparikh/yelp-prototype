@@ -139,13 +139,14 @@ router.put( '/about', checkAuth, ( req, res ) => {
                         email: req.body.email,
                         location: req.body.location,
                         contact: req.body.contact,
+                        description: req.body.description,
                         timing: req.body.timing,
                         latitude: result[ 0 ].latitude,
                         longitude: result[ 0 ].longitude,
                         restaurantType: "All",
 
                     }
-                }
+                }, { new: true }
             ).then( response => {
                 console.log( "Update successfull" )
                 res.status( 200 ).send( response )
@@ -170,7 +171,7 @@ router.post( '/uploadpicture', checkAuth, ( req, res ) => {
         } else {
             console.log( "Inside upload", req.file, req.body );
             restaurantsSchema.findByIdAndUpdate( { _id: req.body.restaurantID },
-                { $set: { profilePicture: req.file.filename } }
+                { $set: { profilePicture: req.file.filename } }, { new: true }
             ).then( response => {
                 res.status( 200 ).send( "Image upload successfull" + response )
             } ).catch( error => {
@@ -219,7 +220,7 @@ router.post( '/dishes', checkAuth, ( req, res ) => {
             }
 
             restaurantsSchema.findByIdAndUpdate( { _id: req.body.restaurantID }
-                , { $push: { dishes: dish } }
+                , { $push: { dishes: dish } }, { new: true }
             ).then( doc => {
                 console.log( "Dish added", doc )
                 res.status( 200 ).send( doc );
@@ -251,7 +252,7 @@ router.put( '/dishes/withoutimage', ( req, res ) => {
     }
     restaurantsSchema.findOneAndUpdate(
         { _id: req.body.restaurantID, "dishes.dishID": req.body.dishID }
-        , { $set: { "dishes.$": updatedDish } },
+        , { $set: { "dishes.$": updatedDish } }, { new: true }
 
 
     ).then( doc => {
@@ -285,7 +286,7 @@ router.put( '/dishes/withimage', ( req, res ) => {
             }
             restaurantsSchema.findOneAndUpdate(
                 { _id: req.body.restaurantID, "dishes.dishID": req.body.dishID }
-                , { $set: { "dishes.$": updatedDish } },
+                , { $set: { "dishes.$": updatedDish } }, { new: true }
 
 
             ).then( doc => {
@@ -305,7 +306,7 @@ router.post( '/follow', checkAuth, ( req, res ) => {
 
 
     restaurantsSchema.findByIdAndUpdate( { _id: req.body.restaurantID }
-        , { $push: { following: req.body.userID } }
+        , { $push: { following: req.body.userID } }, { new: true }
     ).then( doc => {
         console.log( "User added to followinf", doc )
         res.status( 200 ).send( doc );

@@ -10,6 +10,8 @@ import IndividualDish from '../Dishes/IndividualDish';
 import BACKEND_URL from '../../../config/config';
 import profile_picture from '../../../images/restaurant.jpeg';
 import '../../../css/pagination.css';
+import restaurantGetProfileAction from '../../../actions/restaurantGetProfileAction'
+import { connect } from "react-redux";
 
 export class RestaurantAbout extends Component {
     constructor( props ) {
@@ -33,39 +35,45 @@ export class RestaurantAbout extends Component {
 
     }
     componentDidMount () {
-        let email = cookie.load( "email" )
-        axios.defaults.headers.common[ "authorization" ] = cookie.load( 'token' )
-        axios.defaults.withCredentials = true;
 
-        axios.get( BACKEND_URL + '/restaurants/about/' + email ).then( ( response ) => {
-            if ( response.status === 200 ) {
-                let imagePath = BACKEND_URL + "/images/profilepics/" + response.data.profilePicture
-                if ( response.data.profilePicture === null || response.data.profilePicture === "" ) {
-                    console.log( "inside imagepath null" )
-                    imagePath = profile_picture
-                }
-                this.setState( {
-                    restaurantID: response.data._id,
-                    name: response.data.name,
-                    email: response.data.email,
-                    contact: response.data.contact,
-                    location: response.data.location,
-                    description: response.data.description,
-                    timing: response.data.timing,
-                    profileImagePath: imagePath,
-                    dishes: response.data.dishes,
-                    pageCount: Math.ceil( response.data.dishes.length / this.state.perPage )
-                } )
-
-            }
-
-        } ).catch( ( err ) => {
-            console.log( " error getting restaurant data", err )
+        this.props.restaurantGetProfileAction().then( response => {
             this.setState( {
-                error: true
+                dishes: this.props.restaurant.dishes
             } )
-
         } );
+        // let email = cookie.load( "email" )
+        // axios.defaults.headers.common[ "authorization" ] = cookie.load( 'token' )
+        // axios.defaults.withCredentials = true;
+
+        // axios.get( BACKEND_URL + '/restaurants/about/' + email ).then( ( response ) => {
+        //     if ( response.status === 200 ) {
+        //         let imagePath = BACKEND_URL + "/images/profilepics/" + response.data.profilePicture
+        //         if ( response.data.profilePicture === null || response.data.profilePicture === "" ) {
+        //             console.log( "inside imagepath null" )
+        //             imagePath = profile_picture
+        //         }
+        //         this.setState( {
+        //             restaurantID: response.data._id,
+        //             name: response.data.name,
+        //             email: response.data.email,
+        //             contact: response.data.contact,
+        //             location: response.data.location,
+        //             description: response.data.description,
+        //             timing: response.data.timing,
+        //             profileImagePath: imagePath,
+        //             dishes: response.data.dishes,
+        //             pageCount: Math.ceil( response.data.dishes.length / this.state.perPage )
+        //         } )
+
+        //     }
+
+        // } ).catch( ( err ) => {
+        //     console.log( " error getting restaurant data", err )
+        //     this.setState( {
+        //         error: true
+        //     } )
+
+        // } );
     }
 
     toggleDishPopUp = ( e ) => {
@@ -89,7 +97,7 @@ export class RestaurantAbout extends Component {
         if ( !( cookie.load( "auth" ) && cookie.load( "type" ) === "restaurants" ) ) {
             redirectVar = <Redirect to="/login" />
         }
-
+        console.log( "this.props", this.props.restaurant )
         let displayDishImages = this.state.dishes.map( ( dish ) => {
 
             var dishImagePath = BACKEND_URL + "/images/dishes/" + dish.dishPicture
@@ -107,6 +115,7 @@ export class RestaurantAbout extends Component {
         return (
             < div >
                 { redirectVar }
+                {console.log( "in return clg", this.props.restaurant ) }
                 <div className="container-fluid m-1" style={ { height: "100vh" } }>
                     <div className="row h-100">
                         <div className="col-3" style={ { "borderRight": "1px solid #e6e6e6", "background": "whitesmoke" } }>
@@ -114,16 +123,16 @@ export class RestaurantAbout extends Component {
                                 <table style={ { height: "100%" } }>
                                     <tbody>
                                         <div className="restaurant-info" style={ { height: "60%" } }>
-                                            <tr> <img src={ this.state.profileImagePath } width="102%" height="100%" alt="" /></tr>
-                                            <tr><h2>{ this.state.name }</h2></tr>
-                                            <tr>{ this.state.location }</tr>
-                                            <tr>{ this.state.description }</tr>
+                                            <tr> <img src={ this.props.profileImagePath } width="102%" height="100%" alt="" /></tr>
+                                            <tr><h2>{ this.props.restaurant.name }</h2></tr>
+                                            <tr>{ this.props.restaurant.location }</tr>
+                                            <tr>{ this.props.restaurant.description }</tr>
                                         </div>
                                         <div className="rstaurant-contact" style={ { height: "40%" } }>
                                             <tr><h5>Contact Detals:</h5></tr>
-                                            <tr>{ this.state.contact }</tr>
-                                            <tr>{ this.state.email }</tr>
-                                            <tr>{ this.state.timing }</tr>
+                                            <tr>{ this.props.restaurant.contact }</tr>
+                                            <tr>{ this.props.restaurant.email }</tr>
+                                            <tr>{ this.props.restaurant.timing }</tr>
                                         </div>
                                     </tbody>
                                 </table>
@@ -131,7 +140,7 @@ export class RestaurantAbout extends Component {
                             <div className="profile-edit" style={ { height: "20%" } }>
                                 <Link className="btn btn-primary" to={ {
                                     pathname: "/restaurants/editprofile", state: {
-                                        userData: this.state
+                                        userData: this.props.restaurant
                                     }
                                 } }>Edit Profile</Link>
                             </div>
@@ -220,4 +229,20 @@ export class RestaurantAbout extends Component {
 
 }
 
-export default RestaurantAbout
+
+const matchStateToProps = ( state ) => {
+    return {
+        restaurant: state.restaurantProfileReducer.restaurantData,
+        profileImagePath: state.restaurantProfileReducer.profileImagePath,
+    }
+
+}
+
+const matchDispatchToProps = ( dispatch ) => {
+    return {
+        restaurantGetProfileAction: () => dispatch( restaurantGetProfileAction() ),
+    }
+}
+
+export default connect( matchStateToProps, matchDispatchToProps )( RestaurantAbout )
+
