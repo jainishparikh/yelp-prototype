@@ -2,19 +2,20 @@ let initialState = {
     Restaurants: [],
 }
 var restaurants = ( state = initialState, action ) => {
+    let newState = { ...state }
     // console.log( state );
     switch ( action.type ) {
         case "restaurants_success":
-            state.Restaurants = action.payload.response.data
-            state.message = "Got Restaurants Success";
-            return state;
+            newState.Restaurants = action.payload.response.data
+            newState.message = "Got Restaurants Success";
+            return newState;
         case "restaurants_failed":
-            state.error = true;
-            state.message = "Failed getting restaurants"
-            return state;
+            newState.error = true;
+            newState.message = "Failed getting restaurants"
+            return newState;
 
         default:
-            return state;
+            return newState;
 
 
     }

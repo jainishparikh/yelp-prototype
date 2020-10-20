@@ -3,26 +3,27 @@ let initialState = {
     RegisteredEvents: [],
 }
 var events = ( state = initialState, action ) => {
-    // console.log( state );
+    let newState = { ...state }
+    // console.log( newState );
     switch ( action.type ) {
         case "events_success":
-            state.Events = action.payload.response.data
-            state.message = "Events Success";
-            return state;
+            newState.Events = action.payload.response.data
+            newState.message = "Events Success";
+            return newState;
         case "events_failed":
-            state.error = true;
-            state.message = "Events Failed"
-            return state;
+            newState.error = true;
+            newState.message = "Events Failed"
+            return newState;
         case "registered_events_success":
-            state.RegisteredEvents = action.payload.response.data
-            state.message = "Registered Events Success";
-            return state;
+            newState.RegisteredEvents = action.payload.response.data
+            newState.message = "Registered Events Success";
+            return newState;
         case "registered_events_failed":
-            state.error = true;
-            state.message = "Registered Events Failed!"
-            return state;
+            newState.error = true;
+            newState.message = "Registered Events Failed!"
+            return newState;
         default:
-            return state;
+            return newState;
 
 
     }

@@ -4,53 +4,54 @@ let initialState = {
 
 }
 var orders = ( state = initialState, action ) => {
-    // console.log( state );
+    let newState = { ...state }
+    // console.log( newState );
     switch ( action.type ) {
         case "order_fetch_success":
-            state.Orders = action.payload.response.data;
-            state.pageCount = Math.ceil( action.payload.response.data.length / action.payload.perPage )
-            state.message = "Order Placed";
-            return state;
+            newState.Orders = action.payload.response.data;
+            newState.pageCount = Math.ceil( action.payload.response.data.length / action.payload.perPage )
+            newState.message = "Order Placed";
+            return newState;
         case "order_fetch_failed":
-            state.error = true;
-            state.message = "Failed fetching Order"
-            return state;
+            newState.error = true;
+            newState.message = "Failed fetching Order"
+            return newState;
         case "order_success":
-            state.Orders.push( action.payload.response.data )
-            state.orderPlaced = true;
-            state.message = "Order Placed";
-            return state;
+            newState.Orders.push( action.payload.response.data )
+            newState.orderPlaced = true;
+            newState.message = "Order Placed";
+            return newState;
         case "order_failed":
-            state.error = true;
-            state.message = "Failed Placing Order"
-            return state;
+            newState.error = true;
+            newState.message = "Failed Placing Order"
+            return newState;
         case "order_cancel_success":
             let temp = []
-            for ( let i = 0; i < state.Orders.length; i++ ) {
-                if ( state.Orders[ i ]._id === action.payload.response.data._id ) {
+            for ( let i = 0; i < newState.Orders.length; i++ ) {
+                if ( newState.Orders[ i ]._id === action.payload.response.data._id ) {
                     temp.push( action.payload.response.data )
                 } else {
-                    temp.push( state.Orders[ i ] )
+                    temp.push( newState.Orders[ i ] )
                 }
             }
-            // state.Orders.map( order => {
+            // newState.Orders.map( order => {
             //     if ( order._id === action.payload.orderID ) {
             //         order.orderStatus = "Cancel"
             //         order.cancelled = "Yes"
 
             //     }
             // } )
-            state.Orders = temp
-            console.log( "state.temp", temp )
-            state.message = "Order Cancelled";
-            return state;
+            newState.Orders = temp
+            console.log( "newState.temp", temp )
+            newState.message = "Order Cancelled";
+            return newState;
         case "order_cancel_failed":
-            state.error = true;
-            state.message = "Failed canceling Order"
-            return state;
+            newState.error = true;
+            newState.message = "Failed canceling Order"
+            return newState;
 
         default:
-            return state;
+            return newState;
 
 
     }
