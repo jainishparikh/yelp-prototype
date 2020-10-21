@@ -3,6 +3,8 @@ let initialState = {
     profileImagePath: "",
     error: false,
     update: false,
+    dishEdit: false,
+    dishAdd: false,
 
 }
 var restaurantProfileReducer = ( state = initialState, action ) => {
@@ -27,7 +29,30 @@ var restaurantProfileReducer = ( state = initialState, action ) => {
         case "restaurant_profile_update_failed":
             newState.update = false;
             newState.message = "Update Failed";
-            newState.useData = action.payload.response.data;
+            newState.restaurantData = action.payload.response.data;
+            return newState;
+
+        case "dish_add_success":
+            newState.dishAdd = true;
+            newState.message = "Dish Add Success";
+            newState.restaurantData = action.payload.response.data;
+            return newState;
+
+        case "dish_add_failed":
+            newState.dishAdd = false;
+            newState.message = "Dish Add Failed";
+            newState.restaurantData = action.payload.response.data;
+            return newState;
+        case "dish_edit_success":
+            newState.dishEdit = true;
+            newState.message = "Dish Edit Success";
+            newState.restaurantData = action.payload.response.data;
+            return newState;
+
+        case "dish_edit_failed":
+            newState.dishEdit = false;
+            newState.message = "Dish Edit Failed";
+            newState.restaurantData = action.payload.response.data;
             return newState;
         default:
             return newState;

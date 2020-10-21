@@ -5,13 +5,15 @@ import cookie from 'react-cookies';
 import axios from 'axios';
 import ReactModal from 'react-modal';
 import BACKEND_URL from '../../../config/config'
+import restaurantUpdateProfileAction from '../../../actions/restaurantUpdateProfileAction'
+import { connect } from "react-redux";
 
 export class Profile extends Component {
     constructor( props ) {
         super( props )
         if ( this.props.location.state ) {
             this.state = {
-                restaurantID: this.props.location.state.userData.restaurantID,
+                restaurantID: this.props.location.state.userData._id,
                 name: this.props.location.state.userData.name,
                 email: this.props.location.state.userData.email,
                 contact: this.props.location.state.userData.contact,
@@ -23,7 +25,8 @@ export class Profile extends Component {
                 newProfileImage: "",
                 profileImagePath: "",
                 error: false,
-                errorMessage: ""
+                errorMessage: "",
+                update: false,
             }
         } else {
             this.state = {
@@ -38,7 +41,8 @@ export class Profile extends Component {
                 newProfileImage: "",
                 profileImagePath: "",
                 error: false,
-                errorMessage: ""
+                errorMessage: "",
+                update: false,
             }
         }
     }
@@ -89,38 +93,45 @@ export class Profile extends Component {
         e.preventDefault();
         console.log( "in handle submit" )
         if ( !this.state.error ) {
-            axios.defaults.headers.common[ "authorization" ] = cookie.load( 'token' )
-            axios.defaults.withCredentials = true;
-            axios
-                .put( BACKEND_URL + "/restaurants/about", this.state ).then( response => {
-                    if ( response.status === 200 ) {
+            this.props.restaurantUpdateProfileAction( this.state ).then( response => {
+                if ( this.props.update ) {
+                    this.setState( {
+                        update: true
+                    } )
+                }
+            } )
+            // axios.defaults.headers.common[ "authorization" ] = cookie.load( 'token' )
+            // axios.defaults.withCredentials = true;
+            // axios
+            //     .put( BACKEND_URL + "/restaurants/about", this.state ).then( response => {
+            //         if ( response.status === 200 ) {
 
-                        if ( cookie.load( 'email' ) !== this.state.email ) {
-                            cookie.remove( "email", {
-                                path: '/'
-                            } );
-                            cookie.save( "email", this.state.email, {
-                                path: '/',
-                                httpOnly: false,
-                                maxAge: 90000
-                            } )
-                        }
-                        if ( cookie.load( 'name' ) !== this.state.name ) {
-                            cookie.remove( "name", {
-                                path: '/'
-                            } );
-                            cookie.save( "name", this.state.name, {
-                                path: '/',
-                                httpOnly: false,
-                                maxAge: 90000
-                            } )
-                        }
-                        window.location.assign( "/restaurants/about" );
-                    }
+            //             if ( cookie.load( 'email' ) !== this.state.email ) {
+            //                 cookie.remove( "email", {
+            //                     path: '/'
+            //                 } );
+            //                 cookie.save( "email", this.state.email, {
+            //                     path: '/',
+            //                     httpOnly: false,
+            //                     maxAge: 90000
+            //                 } )
+            //             }
+            //             if ( cookie.load( 'name' ) !== this.state.name ) {
+            //                 cookie.remove( "name", {
+            //                     path: '/'
+            //                 } );
+            //                 cookie.save( "name", this.state.name, {
+            //                     path: '/',
+            //                     httpOnly: false,
+            //                     maxAge: 90000
+            //                 } )
+            //             }
+            //             window.location.assign( "/restaurants/about" );
+            //         }
 
-                } ).catch( err => {
-                    console.log( "error in updating profile" );
-                } )
+            //     } ).catch( err => {
+            //         console.log( "error in updating profile" );
+            //     } )
 
         }
     }
@@ -170,6 +181,9 @@ export class Profile extends Component {
         var redirectVar = null;
         if ( !( cookie.load( "auth" ) && cookie.load( "type" ) === "restaurants" ) ) {
             redirectVar = <Redirect to="/login" />
+        }
+        if ( this.state.update ) {
+            redirectVar = <Redirect to="/restaurants/about" />
         }
         let renderError = null
         if ( this.state.error ) {
@@ -279,4 +293,17 @@ export class Profile extends Component {
     }
 }
 
-export default Profile
+const matchStateToProps = ( state ) => {
+    return {
+        update: state.restaurantProfileReducer.update,
+    }
+
+}
+
+const matchDispatchToProps = ( dispatch ) => {
+    return {
+        restaurantUpdateProfileAction: ( data ) => dispatch( restaurantUpdateProfileAction( data ) ),
+    }
+}
+
+export default connect( matchStateToProps, matchDispatchToProps )( Profile )

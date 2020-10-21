@@ -25,6 +25,7 @@ export class RestaurantAbout extends Component {
             description: "",
             timing: "",
             dishPopUp: false,
+            dishEditPopUp: false,
             profileImagePath: profile_picture,
             dishes: [],
             offset: 0,
@@ -34,11 +35,21 @@ export class RestaurantAbout extends Component {
         }
 
     }
+
+    // static getDerivedStateFromProps ( props, state ) {
+    //     if ( state.dishes != props.restaurant.dishes ) {
+    //         return {
+    //             dishes: props.restaurant.dishes
+    //         }
+    //     }
+    // }
+
     componentDidMount () {
 
         this.props.restaurantGetProfileAction().then( response => {
             this.setState( {
-                dishes: this.props.restaurant.dishes
+                dishes: this.props.restaurant.dishes,
+                pageCount: Math.ceil( this.props.restaurant.dishes.length / this.state.perPage )
             } )
         } );
         // let email = cookie.load( "email" )
@@ -78,7 +89,17 @@ export class RestaurantAbout extends Component {
 
     toggleDishPopUp = ( e ) => {
         this.setState( {
-            dishPopUp: !this.state.dishPopUp
+            dishPopUp: !this.state.dishPopUp,
+            dishes: this.props.restaurant.dishes,
+            pageCount: Math.ceil( this.props.restaurant.dishes.length / this.state.perPage )
+        } )
+    }
+
+    toggleDishEditPopUp = ( e ) => {
+        this.setState( {
+            dishEditPopUp: !this.state.dishPopUp,
+            dishes: this.props.restaurant.dishes,
+            pageCount: Math.ceil( this.props.restaurant.dishes.length / this.state.perPage )
         } )
     }
 
@@ -97,7 +118,6 @@ export class RestaurantAbout extends Component {
         if ( !( cookie.load( "auth" ) && cookie.load( "type" ) === "restaurants" ) ) {
             redirectVar = <Redirect to="/login" />
         }
-        console.log( "this.props", this.props.restaurant )
         let displayDishImages = this.state.dishes.map( ( dish ) => {
 
             var dishImagePath = BACKEND_URL + "/images/dishes/" + dish.dishPicture
@@ -105,10 +125,12 @@ export class RestaurantAbout extends Component {
                 <img src={ dishImagePath } style={ { "margin": "5px", "box-shadow": "0px 0px 10px gray" } } width="250px" height="95%" alt="" />
             )
         } )
+        console.log( "this.props.dishes", this.props.restaurant.dishes )
+        console.log( "this.state.dishes", this.state.dishes )
 
         let details = this.state.dishes.slice( this.state.offset, this.state.offset + this.state.perPage ).map( ( dish ) => {
             return (
-                <IndividualDish key={ dish.dishID } dishData={ dish } />
+                <IndividualDish key={ dish.dishID } dishData={ dish } dishEditPopUp={ this.toggleDishEditPopUp } />
             )
         } )
 

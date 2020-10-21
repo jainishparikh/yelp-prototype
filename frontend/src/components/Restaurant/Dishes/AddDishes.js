@@ -4,6 +4,9 @@ import { Redirect } from 'react-router';
 import cookie from 'react-cookies';
 import axios from 'axios';
 import BACKEND_URL from '../../../config/config'
+import restaurantAddDishAction from '../../../actions/restaurantAddDishAction'
+import restaurantEditDishAction from '../../../actions/restaurantEditDishAction'
+import { connect } from "react-redux";
 
 
 export class AddDishes extends Component {
@@ -19,6 +22,8 @@ export class AddDishes extends Component {
             dishImageUpdate: false,
             newDishImage: "",
             dishImagePath: "",
+            dishAdd: false,
+            dishEdit: false,
         }
     }
 
@@ -50,89 +55,99 @@ export class AddDishes extends Component {
     handleOnSubmit = sub => {
         sub.preventDefault();
         if ( this.props.call === "edit" ) {
-            var dishData = {
-                restaurantID: cookie.load( 'id' ),
-                dishID: this.state.dishID,
-                dishName: this.state.dishName,
-                dishIngrediants: this.state.dishIngrediants,
-                dishPrice: this.state.dishPrice,
-                dishDescription: this.state.dishDescription,
-                dishCategory: this.state.dishCategory
-
-            }
-            console.log( "dishID", this.state )
-            var api_path = "";
-            if ( this.state.newDishImage === "" ) {
-                console.log( "without new image" )
-                dishData.dishPicture = this.props.dishData.dishPicture
-                var formData = dishData;
-                var config = {
-                    headers: {
-                        'content-type': 'application/json'
-                    }
+            this.props.restaurantEditDishAction( this.state, this.props.dishData.dishPicture ).then( response => {
+                if ( this.props.dishEdit ) {
+                    this.props.closePopUp()
                 }
-                api_path = "/restaurants/dishes/withoutimage"
-            } else {
-                api_path = "/restaurants/dishes/withimage"
-                var formData = new FormData();
-                formData.append( 'myImage', this.state.newDishImage, this.state.newDishImage.name )
+            } )
+            // var dishData = {
+            //     restaurantID: cookie.load( 'id' ),
+            //     dishID: this.state.dishID,
+            //     dishName: this.state.dishName,
+            //     dishIngrediants: this.state.dishIngrediants,
+            //     dishPrice: this.state.dishPrice,
+            //     dishDescription: this.state.dishDescription,
+            //     dishCategory: this.state.dishCategory
 
-                for ( var key in dishData ) {
-                    formData.append( key, dishData[ key ] );
-                }
+            // }
+            // console.log( "dishID", this.state )
+            // var api_path = "";
+            // if ( this.state.newDishImage === "" ) {
+            //     console.log( "without new image" )
+            //     dishData.dishPicture = this.props.dishData.dishPicture
+            //     var formData = dishData;
+            //     var config = {
+            //         headers: {
+            //             'content-type': 'application/json'
+            //         }
+            //     }
+            //     api_path = "/restaurants/dishes/withoutimage"
+            // } else {
+            //     api_path = "/restaurants/dishes/withimage"
+            //     var formData = new FormData();
+            //     formData.append( 'myImage', this.state.newDishImage, this.state.newDishImage.name )
 
-                var config = {
-                    headers: {
-                        'content-type': 'multipart/form-data'
-                    }
-                }
-            }
-            console.log( formData );
-            axios.defaults.headers.common[ "authorization" ] = cookie.load( 'token' )
-            axios.defaults.withCredentials = true;
-            axios
-                .put( BACKEND_URL + api_path, formData, config ).then( response => {
-                    if ( response.status === 200 ) {
-                        console.log( "dish successfully added" + response );
+            //     for ( var key in dishData ) {
+            //         formData.append( key, dishData[ key ] );
+            //     }
 
-                        window.location.assign( "/restaurants/about" )
-                    }
-                } ).catch( err => {
-                    console.log( "Error in adding dish" );
-                } )
+            //     var config = {
+            //         headers: {
+            //             'content-type': 'multipart/form-data'
+            //         }
+            //     }
+            // }
+            // console.log( formData );
+            // axios.defaults.headers.common[ "authorization" ] = cookie.load( 'token' )
+            // axios.defaults.withCredentials = true;
+            // axios
+            //     .put( BACKEND_URL + api_path, formData, config ).then( response => {
+            //         if ( response.status === 200 ) {
+            //             console.log( "dish successfully added" + response );
+
+            //             window.location.assign( "/restaurants/about" )
+            //         }
+            //     } ).catch( err => {
+            //         console.log( "Error in adding dish" );
+            //     } )
 
         } else {
-            var dishData = {
-                restaurantID: cookie.load( 'id' ),
-                dishName: this.state.dishName,
-                dishIngrediants: this.state.dishIngrediants,
-                dishPrice: this.state.dishPrice,
-                dishDescription: this.state.dishDescription,
-                dishCategory: this.state.dishCategory
-
-            }
-            const formData = new FormData();
-            formData.append( 'myImage', this.state.newDishImage, this.state.newDishImage.name )
-            for ( var key in dishData ) {
-                formData.append( key, dishData[ key ] );
-            }
-            const config = {
-                headers: {
-                    'content-type': 'multipart/form-data'
+            this.props.restaurantAddDishAction( this.state ).then( response => {
+                if ( this.props.dishAdd ) {
+                    this.props.closePopUp()
                 }
-            }
-            axios.defaults.headers.common[ "authorization" ] = cookie.load( 'token' )
-            axios.defaults.withCredentials = true;
-            axios
-                .post( BACKEND_URL + "/restaurants/dishes", formData, config ).then( response => {
-                    if ( response.status === 200 ) {
-                        console.log( "dish successfully added" + response );
+            } )
+            // var dishData = {
+            //     restaurantID: cookie.load( 'id' ),
+            //     dishName: this.state.dishName,
+            //     dishIngrediants: this.state.dishIngrediants,
+            //     dishPrice: this.state.dishPrice,
+            //     dishDescription: this.state.dishDescription,
+            //     dishCategory: this.state.dishCategory
 
-                        window.location.assign( "/restaurants/about" )
-                    }
-                } ).catch( err => {
-                    console.log( "Error in adding dish" );
-                } )
+            // }
+            // const formData = new FormData();
+            // formData.append( 'myImage', this.state.newDishImage, this.state.newDishImage.name )
+            // for ( var key in dishData ) {
+            //     formData.append( key, dishData[ key ] );
+            // }
+            // const config = {
+            //     headers: {
+            //         'content-type': 'multipart/form-data'
+            //     }
+            // }
+            // axios.defaults.headers.common[ "authorization" ] = cookie.load( 'token' )
+            // axios.defaults.withCredentials = true;
+            // axios
+            //     .post( BACKEND_URL + "/restaurants/dishes", formData, config ).then( response => {
+            //         if ( response.status === 200 ) {
+            //             console.log( "dish successfully added" + response );
+
+            //             window.location.assign( "/restaurants/about" )
+            //         }
+            //     } ).catch( err => {
+            //         console.log( "Error in adding dish" );
+            //     } )
         }
 
 
@@ -181,6 +196,7 @@ export class AddDishes extends Component {
         if ( !cookie.load( "auth" ) ) {
             redirectVar = <Redirect to="/login" />
         }
+
         return (
             <div>
                 { redirectVar }
@@ -237,4 +253,21 @@ export class AddDishes extends Component {
     }
 }
 
-export default AddDishes
+const matchStateToProps = ( state ) => {
+    return {
+        dishEdit: state.restaurantProfileReducer.dishEdit,
+        dishAdd: state.restaurantProfileReducer.dishAdd,
+        message: state.restaurantProfileReducer.message,
+    }
+
+}
+
+const matchDispatchToProps = ( dispatch ) => {
+    return {
+        restaurantEditDishAction: ( data, oldPicture ) => dispatch( restaurantEditDishAction( data, oldPicture ) ),
+        restaurantAddDishAction: ( data ) => dispatch( restaurantAddDishAction( data ) ),
+    }
+}
+
+export default connect( matchStateToProps, matchDispatchToProps )( AddDishes )
+
