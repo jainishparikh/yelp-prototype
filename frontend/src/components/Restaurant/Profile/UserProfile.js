@@ -6,6 +6,9 @@ import axios from 'axios';
 import profile_picture from '../../../images/profile.png';
 import BACKEND_URL from '../../../config/config';
 import GetReviews from '../Reviews/GetReviews';
+import userProfileGetAction from '../../../actions/userProfileGetAction';
+import userFollowAction from '../../../actions/userFollowActions';
+import { connect } from "react-redux";
 
 export class UserProfile extends Component {
     constructor( props ) {
@@ -31,53 +34,54 @@ export class UserProfile extends Component {
     }
 
     componentDidMount () {
-        let restaurantID = cookie.load( 'id' )
-        let email = this.props.match.params.userEmail
-        axios.defaults.headers.common[ "authorization" ] = cookie.load( 'token' )
-        axios.defaults.withCredentials = true;
-        axios.get( BACKEND_URL + '/users/about/' + email ).then( ( response ) => {
-            if ( response.status === 200 ) {
-                console.log( "got data" )
-                let imagePath = BACKEND_URL + "/images/profilepics/" + response.data.profilePicture
-                if ( response.data.profilePicture === null ) {
-                    console.log( "inside imagepath null" )
-                    imagePath = profile_picture
-                }
-                let length = response.data.followedBy.length
-                for ( let i = 0; i < length; i++ ) {
-                    if ( response.data.followedBy[ i ] === restaurantID ) {
-                        this.setState( {
-                            following: true
-                        } )
-                        break;
-                    }
-                }
-                this.setState( {
-                    userID: response.data._id,
-                    name: response.data.name,
-                    nickName: response.data.nickName,
-                    email: response.data.email,
-                    contactNumber: response.data.contactNumber,
-                    dateOfBirth: response.data.dateOfBirth,
-                    city: response.data.city,
-                    state: response.data.state,
-                    country: response.data.country,
-                    headline: response.data.headline,
-                    yelpingSince: response.data.yelpingSince,
-                    thingsILove: response.data.thingsILove,
-                    blogLink: response.data.blogLink,
-                    profileImagePath: imagePath
-                } )
-            }
-            console.log( this.state );
+        this.props.userProfileGetAction( this.props.match.params.userEmail )
+        // let restaurantID = cookie.load( 'id' )
+        // let email = this.props.match.params.userEmail
+        // axios.defaults.headers.common[ "authorization" ] = cookie.load( 'token' )
+        // axios.defaults.withCredentials = true;
+        // axios.get( BACKEND_URL + '/users/about/' + email ).then( ( response ) => {
+        //     if ( response.status === 200 ) {
+        //         console.log( "got data" )
+        //         let imagePath = BACKEND_URL + "/images/profilepics/" + response.data.profilePicture
+        //         if ( response.data.profilePicture === null ) {
+        //             console.log( "inside imagepath null" )
+        //             imagePath = profile_picture
+        //         }
+        //         let length = response.data.followedBy.length
+        //         for ( let i = 0; i < length; i++ ) {
+        //             if ( response.data.followedBy[ i ] === restaurantID ) {
+        //                 this.setState( {
+        //                     following: true
+        //                 } )
+        //                 break;
+        //             }
+        //         }
+        //         this.setState( {
+        //             userID: response.data._id,
+        //             name: response.data.name,
+        //             nickName: response.data.nickName,
+        //             email: response.data.email,
+        //             contactNumber: response.data.contactNumber,
+        //             dateOfBirth: response.data.dateOfBirth,
+        //             city: response.data.city,
+        //             state: response.data.state,
+        //             country: response.data.country,
+        //             headline: response.data.headline,
+        //             yelpingSince: response.data.yelpingSince,
+        //             thingsILove: response.data.thingsILove,
+        //             blogLink: response.data.blogLink,
+        //             profileImagePath: imagePath
+        //         } )
+        //     }
+        //     console.log( this.state );
 
-        } ).catch( ( err ) => {
-            console.log( " error getting user data" )
-            this.setState( {
-                error: true
-            } )
+        // } ).catch( ( err ) => {
+        //     console.log( " error getting user data" )
+        //     this.setState( {
+        //         error: true
+        //     } )
 
-        } );
+        // } );
     }
 
     goBackTo = ( e ) => {
@@ -85,22 +89,23 @@ export class UserProfile extends Component {
     }
 
     followUser = () => {
-        console.log( "in follow user" )
-        axios.defaults.headers.common[ "authorization" ] = cookie.load( 'token' )
-        axios.defaults.withCredentials = true;
-        let data = {
-            restaurantID: cookie.load( 'id' ),
-            userID: this.state.userID
-        }
-        axios.post( BACKEND_URL + '/users/follow/', data ).then( response => {
-            if ( response.status === 200 ) {
-                this.setState( {
-                    following: true
-                } )
-            }
-        } ).catch( error => {
-            console.log( "Error in following: ", error );
-        } )
+        this.props.userFollowAction( this.props.user._id )
+        // console.log( "in follow user" )
+        // axios.defaults.headers.common[ "authorization" ] = cookie.load( 'token' )
+        // axios.defaults.withCredentials = true;
+        // let data = {
+        //     restaurantID: cookie.load( 'id' ),
+        //     userID: this.state.userID
+        // }
+        // axios.post( BACKEND_URL + '/users/follow/', data ).then( response => {
+        //     if ( response.status === 200 ) {
+        //         this.setState( {
+        //             following: true
+        //         } )
+        //     }
+        // } ).catch( error => {
+        //     console.log( "Error in following: ", error );
+        // } )
     }
 
     render () {
@@ -109,7 +114,7 @@ export class UserProfile extends Component {
             redirectVar = <Redirect to="/login" />
         }
         var displayFollow = null;
-        if ( this.state.following ) {
+        if ( this.props.following ) {
             displayFollow = <button className="btn btn-danger">Already Following</button>
         } else {
             displayFollow = <button className="btn btn-danger" onClick={ this.followUser }>Follow</button>
@@ -132,7 +137,7 @@ export class UserProfile extends Component {
                         <div className="row mt-3 mb-3" style={ { height: "30%" } }>
                             {/* profile picture */ }
                             <div className="col-2">
-                                <img src={ this.state.profileImagePath } width="102%" height="100%" alt="" />
+                                <img src={ this.props.profileImagePath } width="102%" height="100%" alt="" />
                             </div>
                             {/* profile display */ }
                             <div className="col-8" style={ { "box-shadow": "0px 0px 10px gray", background: "whitesmoke" } }>
@@ -142,15 +147,15 @@ export class UserProfile extends Component {
                                             <tbody>
                                                 <tr></tr>
                                                 <tr>
-                                                    <td><h2>{ this.state.name }</h2></td>
+                                                    <td><h2>{ this.props.user.name }</h2></td>
                                                 </tr>
                                                 <tr>
-                                                    <td><h5>{ this.state.city }, { this.state.state }</h5></td>
+                                                    <td><h5>{ this.props.user.city }, { this.props.user.state }</h5></td>
                                                 </tr>
                                                 <tr>&nbsp;</tr>
                                                 <tr>&nbsp;</tr>
                                                 <tr>
-                                                    <td>{ this.state.headline }</td>
+                                                    <td>{ this.props.user.headline }</td>
                                                 </tr>
                                             </tbody>
                                         </table>
@@ -161,11 +166,11 @@ export class UserProfile extends Component {
                                         <table>
                                             <tbody>
                                                 <th>Yelping Since:</th>
-                                                <tr>{ this.state.yelpingSince }</tr>
+                                                <tr>{ this.props.user.yelpingSince }</tr>
                                                 <th>Things I Love:</th>
-                                                <tr>{ this.state.thingsILove }&nbsp;</tr>
+                                                <tr>{ this.props.user.thingsILove }&nbsp;</tr>
                                                 <th>Blog Link:</th>
-                                                <tr>{ this.state.blogLink }&nbsp;</tr>
+                                                <tr>{ this.props.user.blogLink }&nbsp;</tr>
                                             </tbody>
                                         </table>
                                     </div>
@@ -192,4 +197,23 @@ export class UserProfile extends Component {
     }
 }
 
-export default UserProfile
+
+const matchStateToProps = ( state ) => {
+    return {
+        user: state.userProfileReducer.userData,
+        following: state.userProfileReducer.following,
+        profileImagePath: state.userProfileReducer.profileImagePath,
+
+    }
+
+}
+
+const matchDispatchToProps = ( dispatch ) => {
+    return {
+        userProfileGetAction: ( email ) => dispatch( userProfileGetAction( email ) ),
+        userFollowAction: ( userID ) => dispatch( userFollowAction( userID ) ),
+    }
+}
+
+export default connect( matchStateToProps, matchDispatchToProps )( UserProfile )
+

@@ -10,6 +10,7 @@ import restauranteventsReducer from './RestaurantReducers/eventsReducer';
 import restaurantordersReducer from './RestaurantReducers/ordersReducer';
 import restaurantreviewsReducer from './RestaurantReducers/reviewsReducer';
 import usersReducer from './RestaurantReducers/usersReducer';
+import userProfileReducer from './RestaurantReducers/userProfileReducer';
 
 var rootReducer = combineReducers( {
     SignUpReducer: SignUpReducer,
@@ -23,6 +24,7 @@ var rootReducer = combineReducers( {
     restaurantordersReducer: restaurantordersReducer,
     restaurantreviewsReducer: restaurantreviewsReducer,
     usersReducer: usersReducer,
+    userProfileReducer: userProfileReducer,
 
 } )
 export default rootReducer
