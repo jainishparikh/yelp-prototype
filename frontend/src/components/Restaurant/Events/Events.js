@@ -8,6 +8,8 @@ import Modal from 'react-modal';
 import PostEvent from './PostEvent';
 import '../../../css/pagination.css';
 import ReactPaginate from 'react-paginate';
+import restaurantGetEventsAction from '../../../actions/restaurantGetEventsAction'
+import { connect } from "react-redux";
 
 export class Events extends Component {
     constructor( props ) {
@@ -16,25 +18,28 @@ export class Events extends Component {
             Events: [],
             postEventPopUp: false,
             offset: 0,
-            perPage: 2,
+            perPage: 5,
             pageCount: 0
         }
     }
 
     componentDidMount () {
-        var restaurantID = cookie.load( 'id' )
-        axios.defaults.headers.common[ "authorization" ] = cookie.load( 'token' )
-        axios.defaults.withCredentials = true;
-        return axios.get( BACKEND_URL + '/events/restaurants/' + restaurantID ).then( response => {
-            this.setState( {
-                Events: response.data,
-                pageCount: Math.ceil( response.data.length / this.state.perPage )
-            } )
-            // console.log( this.state )
+        this.props.restaurantGetEventsAction( this.state.perPage ).then( response => {
 
-        } ).catch( error => {
-            console.log( "Error in fetching restaurant events: ", error );
         } )
+        // var restaurantID = cookie.load( 'id' )
+        // axios.defaults.headers.common[ "authorization" ] = cookie.load( 'token' )
+        // axios.defaults.withCredentials = true;
+        // return axios.get( BACKEND_URL + '/events/restaurants/' + restaurantID ).then( response => {
+        //     this.setState( {
+        //         Events: response.data,
+        //         pageCount: Math.ceil( response.data.length / this.state.perPage )
+        //     } )
+        //     // console.log( this.state )
+
+        // } ).catch( error => {
+        //     console.log( "Error in fetching restaurant events: ", error );
+        // } )
     }
 
     togglepostEventPopUp = ( e ) => {
@@ -57,7 +62,8 @@ export class Events extends Component {
         if ( !( cookie.load( "auth" ) && cookie.load( "type" ) === "restaurants" ) ) {
             redirectVar = <Redirect to="/login" />
         }
-        let details = this.state.Events.slice( this.state.offset, this.state.offset + this.state.perPage ).map( ( event, index ) => {
+        console.log( "this.props.Events", this.props.Events )
+        let details = this.props.Events.slice( this.state.offset, this.state.offset + this.state.perPage ).map( ( event, index ) => {
             return (
                 <IndividualEvent key={ index } eventData={ event } />
             )
@@ -113,7 +119,7 @@ export class Events extends Component {
                                         nextLabel={ "next" }
                                         breakLabel={ "..." }
                                         breakClassName={ "break-me" }
-                                        pageCount={ this.state.pageCount }
+                                        pageCount={ this.props.pageCount }
                                         marginPagesDisplayed={ 2 }
                                         pageRangeDisplayed={ 5 }
                                         onPageChange={ this.handlePageClick }
@@ -138,4 +144,20 @@ export class Events extends Component {
     }
 }
 
-export default Events
+
+const matchStateToProps = ( state ) => {
+    return {
+        Events: state.restauranteventsReducer.Events,
+        pageCount: state.restauranteventsReducer.pageCount,
+    }
+
+}
+
+const matchDispatchToProps = ( dispatch ) => {
+    return {
+        restaurantGetEventsAction: ( perPage ) => dispatch( restaurantGetEventsAction( perPage ) ),
+    }
+}
+
+export default connect( matchStateToProps, matchDispatchToProps )( Events )
+

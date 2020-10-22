@@ -4,6 +4,10 @@ import cookie from 'react-cookies';
 import axios from 'axios';
 import BACKEND_URL from '../../../config/config';
 import IndividualReview from './IndividualReview';
+import restaurantGetReviewsAction from '../../../actions/restaurantGetReviewsAction'
+import { connect } from "react-redux";
+
+
 
 export class Reviews extends Component {
     constructor( props ) {
@@ -13,29 +17,32 @@ export class Reviews extends Component {
         }
     }
     componentDidMount () {
-        var type = cookie.load( 'type' )
-        var id = cookie.load( 'id' )
-        axios.defaults.headers.common[ "authorization" ] = cookie.load( 'token' )
-        axios.defaults.withCredentials = true;
-        axios.get( BACKEND_URL + '/reviews/getreviews/' + type + '/' + id ).then( response => {
-            response.data.map( ( review ) => {
-                this.setState( {
-                    Reviews: [ ...this.state.Reviews, review ]
-                } )
+        this.props.restaurantGetReviewsAction().then( response => {
 
-            } )
-            console.log( this.state )
-
-        } ).catch( error => {
-            console.log( "Error in fetching reviews: ", error );
         } )
+        // var type = cookie.load( 'type' )
+        // var id = cookie.load( 'id' )
+        // axios.defaults.headers.common[ "authorization" ] = cookie.load( 'token' )
+        // axios.defaults.withCredentials = true;
+        // axios.get( BACKEND_URL + '/reviews/getreviews/' + type + '/' + id ).then( response => {
+        //     response.data.map( ( review ) => {
+        //         this.setState( {
+        //             Reviews: [ ...this.state.Reviews, review ]
+        //         } )
+
+        //     } )
+        //     console.log( this.state )
+
+        // } ).catch( error => {
+        //     console.log( "Error in fetching reviews: ", error );
+        // } )
     }
     render () {
         var redirectVar = null;
         if ( !( cookie.load( "auth" ) && cookie.load( "type" ) === "restaurants" ) ) {
             redirectVar = <Redirect to="/login" />
         }
-        let details = this.state.Reviews.map( ( review ) => {
+        let details = this.props.Reviews.map( ( review ) => {
             return (
                 <IndividualReview reviewData={ review } />
             )
@@ -62,4 +69,19 @@ export class Reviews extends Component {
     }
 }
 
-export default Reviews
+
+const matchStateToProps = ( state ) => {
+    return {
+        Reviews: state.restaurantreviewsReducer.Reviews,
+
+    }
+
+}
+
+const matchDispatchToProps = ( dispatch ) => {
+    return {
+        restaurantGetReviewsAction: () => dispatch( restaurantGetReviewsAction() ),
+    }
+}
+
+export default connect( matchStateToProps, matchDispatchToProps )( Reviews )

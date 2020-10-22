@@ -6,6 +6,8 @@ import IndividualOrder from "./IndividualOrder";
 import { Redirect } from 'react-router';
 import '../../../css/pagination.css';
 import ReactPaginate from 'react-paginate';
+import restaurantGetOrdersAction from '../../../actions/restaurantGetOrdersAction'
+import { connect } from "react-redux";
 
 export class Orders extends Component {
     constructor( props ) {
@@ -15,25 +17,26 @@ export class Orders extends Component {
             orderStatusFilter: "All",
             reload: false,
             offset: 0,
-            perPage: 2,
+            perPage: 5,
             pageCount: 0
         }
     }
 
     componentDidMount () {
-        var restaurantID = cookie.load( 'id' );
-        axios.defaults.headers.common[ "authorization" ] = cookie.load( 'token' )
-        axios.defaults.withCredentials = true;
-        axios.get( BACKEND_URL + '/orders/restaurants/' + restaurantID ).then( response => {
+        this.props.restaurantGetOrdersAction( this.state.perPage )
+        // var restaurantID = cookie.load( 'id' );
+        // axios.defaults.headers.common[ "authorization" ] = cookie.load( 'token' )
+        // axios.defaults.withCredentials = true;
+        // axios.get( BACKEND_URL + '/orders/restaurants/' + restaurantID ).then( response => {
 
-            this.setState( {
-                Orders: response.data,
-                pageCount: Math.ceil( response.data.length / this.state.perPage )
-            } )
-            console.log( this.state )
-        } ).catch( error => {
-            console.log( "Error fetching orders for restaurant", error );
-        } )
+        //     this.setState( {
+        //         Orders: response.data,
+        //         pageCount: Math.ceil( response.data.length / this.state.perPage )
+        //     } )
+        //     console.log( this.state )
+        // } ).catch( error => {
+        //     console.log( "Error fetching orders for restaurant", error );
+        // } )
     }
 
     handleradioChange = ( e ) => {
@@ -56,11 +59,12 @@ export class Orders extends Component {
     }
     render () {
         let redirectVar = null
-        let pageCount = this.state.pageCount
+        let pageCount = this.props.pageCount
         if ( !( cookie.load( "auth" ) && cookie.load( "type" ) === "restaurants" ) ) {
             redirectVar = <Redirect to="/login" />
         }
-        let filteredOrders = this.state.Orders.filter( order => this.state.orderStatusFilter === "All" || order.orderStatus === this.state.orderStatusFilter )
+        console.log( "this.props.Orders", this.props.Orders )
+        let filteredOrders = this.props.Orders.filter( order => this.state.orderStatusFilter === "All" || order.orderStatus === this.state.orderStatusFilter )
         pageCount = Math.ceil( filteredOrders.length / this.state.perPage )
         let displayOrders = filteredOrders.slice( this.state.offset, this.state.offset + this.state.perPage ).map( order => {
             return ( <IndividualOrder reload={ this.reload } key={ order._id } orderData={ order } /> )
@@ -113,4 +117,19 @@ export class Orders extends Component {
     }
 }
 
-export default Orders
+const matchStateToProps = ( state ) => {
+    return {
+        Orders: state.restaurantordersReducer.Orders,
+        pageCount: state.restaurantordersReducer.pageCount,
+    }
+
+}
+
+const matchDispatchToProps = ( dispatch ) => {
+    return {
+        restaurantGetOrdersAction: ( perPage ) => dispatch( restaurantGetOrdersAction( perPage ) ),
+    }
+}
+
+export default connect( matchStateToProps, matchDispatchToProps )( Orders )
+

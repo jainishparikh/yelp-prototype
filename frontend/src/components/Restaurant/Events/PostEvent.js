@@ -4,6 +4,8 @@ import { Redirect } from 'react-router';
 import cookie from 'react-cookies';
 import axios from 'axios';
 import BACKEND_URL from '../../../config/config'
+import postEventAction from '../../../actions/postEventAction'
+import { connect } from "react-redux";
 
 export class PostEvent extends Component {
     constructor( props ) {
@@ -29,26 +31,29 @@ export class PostEvent extends Component {
 
     handleOnSubmit = sub => {
         sub.preventDefault();
-        var eventData = {
-            eventName: this.state.eventName,
-            eventTime: this.state.eventTime,
-            eventDate: this.state.eventDate,
-            eventDescription: this.state.eventDescription,
-            eventLocation: this.state.eventLocation,
-            Hashtags: this.state.hashtags,
-            restaurantID: cookie.load( 'id' ),
-        }
-        axios.defaults.headers.common[ "authorization" ] = cookie.load( 'token' )
-        axios.defaults.withCredentials = true;
-        axios.post( BACKEND_URL + "/events/restaurants/addEvent", eventData ).then( response => {
-            if ( response.status === 200 ) {
-                console.log( "Event successfully Posted" + response );
-
-                window.location.assign( "/restaurants/events" )
-            }
-        } ).catch( err => {
-            console.log( "Error in Posting event" );
+        this.props.postEventAction( this.state ).then( response => {
+            this.props.closePopUp()
         } )
+        // var eventData = {
+        //     eventName: this.state.eventName,
+        //     eventTime: this.state.eventTime,
+        //     eventDate: this.state.eventDate,
+        //     eventDescription: this.state.eventDescription,
+        //     eventLocation: this.state.eventLocation,
+        //     Hashtags: this.state.hashtags,
+        //     restaurantID: cookie.load( 'id' ),
+        // }
+        // axios.defaults.headers.common[ "authorization" ] = cookie.load( 'token' )
+        // axios.defaults.withCredentials = true;
+        // axios.post( BACKEND_URL + "/events/restaurants/addEvent", eventData ).then( response => {
+        //     if ( response.status === 200 ) {
+        //         console.log( "Event successfully Posted" + response );
+
+        //         window.location.assign( "/restaurants/events" )
+        //     }
+        // } ).catch( err => {
+        //     console.log( "Error in Posting event" );
+        // } )
     }
 
     render () {
@@ -118,4 +123,17 @@ export class PostEvent extends Component {
     }
 }
 
-export default PostEvent
+
+const matchStateToProps = ( state ) => {
+    return {
+    }
+
+}
+
+const matchDispatchToProps = ( dispatch ) => {
+    return {
+        postEventAction: ( data ) => dispatch( postEventAction( data ) ),
+    }
+}
+
+export default connect( matchStateToProps, matchDispatchToProps )( PostEvent )

@@ -82,7 +82,7 @@ router.post( '/users/register', checkAuth, ( req, res ) => {
 
 
     eventSchema.findByIdAndUpdate( { _id: req.body.eventID }
-        , { $push: { users: user } }
+        , { $push: { users: user } }, { new: true }
     ).then( doc => {
         console.log( "User registered", doc )
         res.status( 200 ).send( doc );

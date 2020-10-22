@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import axios from 'axios';
 import BACKEND_URL from '../../../config/config';
 import cookie from 'react-cookies';
+import { connect } from "react-redux";
 
 
 export class EventRegistrations extends Component {
@@ -14,21 +15,30 @@ export class EventRegistrations extends Component {
         }
     }
     componentDidMount () {
-        var eventID = this.state.eventID
-        axios.defaults.headers.common[ "authorization" ] = cookie.load( 'token' )
-        axios.defaults.withCredentials = true;
-        axios.get( BACKEND_URL + '/events/attendees/' + eventID ).then( response => {
-            response.data.map( ( attendee ) => {
+        let length = this.props.Events.length
+        for ( let i = 0; i < length; i++ ) {
+            if ( this.props.Events[ i ]._id === this.props.eventData.eventID ) {
                 this.setState( {
-                    Attendees: [ ...this.state.Attendees, attendee ]
+                    Attendees: this.props.Events[ i ].users
                 } )
+                break;
+            }
+        }
+        // var eventID = this.state.eventID
+        // axios.defaults.headers.common[ "authorization" ] = cookie.load( 'token' )
+        // axios.defaults.withCredentials = true;
+        // axios.get( BACKEND_URL + '/events/attendees/' + eventID ).then( response => {
+        //     response.data.map( ( attendee ) => {
+        //         this.setState( {
+        //             Attendees: [ ...this.state.Attendees, attendee ]
+        //         } )
 
-            } )
-            console.log( this.state )
+        //     } )
+        //     console.log( this.state )
 
-        } ).catch( error => {
-            console.log( "Error getting attendees for an event" )
-        } )
+        // } ).catch( error => {
+        //     console.log( "Error getting attendees for an event" )
+        // } )
     }
     render () {
         let details = this.state.Attendees.map( ( attendee ) => {
@@ -71,4 +81,19 @@ export class EventRegistrations extends Component {
     }
 }
 
-export default EventRegistrations
+const matchStateToProps = ( state ) => {
+    return {
+        Events: state.restauranteventsReducer.Events,
+
+    }
+
+}
+
+// const matchDispatchToProps = ( dispatch ) => {
+//     return {
+//         restaurantGetEventsAction: ( perPage ) => dispatch( restaurantGetEventsAction( perPage ) ),
+//     }
+// }
+
+export default connect( matchStateToProps, null )( EventRegistrations )
+

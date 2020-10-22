@@ -15,7 +15,8 @@ var userSchema = new Schema( {
     yelpingSince: String,
     thingsILove: String,
     blogLink: String,
-    profilePicture: String
+    profilePicture: String,
+    followedBy: [ String ]
 
 }
     , { collection: 'users' }

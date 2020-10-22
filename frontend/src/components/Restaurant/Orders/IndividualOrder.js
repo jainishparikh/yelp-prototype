@@ -5,6 +5,8 @@ import Modal from 'react-modal';
 import { Link } from 'react-router-dom';
 import profile_picture from '../../../images/profile.png';
 import cookie from 'react-cookies';
+import restaurantUpdateOrderAction from '../../../actions/restaurantUpdateOrderAction'
+import { connect } from "react-redux";
 
 
 export class IndividualOrder extends Component {
@@ -45,24 +47,27 @@ export class IndividualOrder extends Component {
 
     // database call on Done to change staus in database
     updateStatusInOrders = () => {
-        if ( this.state.updatedStatus === "" ) {
-            var data = {
-                orderStatus: "Order Received"
-            }
-        } else {
-            var data = {
-                orderStatus: this.state.updatedStatus
-            }
-        }
-        var orderID = this.props.orderData._id
-        console.log( orderID )
-        axios.put( BACKEND_URL + '/orders/restaurants/update/' + orderID, data ).then( response => {
+        this.props.restaurantUpdateOrderAction( this.state.updatedStatus, this.props.orderData._id ).then( response => {
             this.toggleChangeStatus()
-            console.log( "Updated" )
-            this.props.reload( this.state.updatedStatus )
-        } ).catch( error => {
-            console.log( "Error in updating status: ", error )
         } )
+        // if ( this.state.updatedStatus === "" ) {
+        //     var data = {
+        //         orderStatus: "Order Received"
+        //     }
+        // } else {
+        //     var data = {
+        //         orderStatus: this.state.updatedStatus
+        //     }
+        // }
+        // var orderID = this.props.orderData._id
+        // console.log( orderID )
+        // axios.put( BACKEND_URL + '/orders/restaurants/update/' + orderID, data ).then( response => {
+        //     this.toggleChangeStatus()
+        //     console.log( "Updated" )
+        //     this.props.reload( this.state.updatedStatus )
+        // } ).catch( error => {
+        //     console.log( "Error in updating status: ", error )
+        // } )
 
     }
     toggleDetailsPopUp = ( e ) => {
@@ -180,4 +185,19 @@ export class IndividualOrder extends Component {
     }
 }
 
-export default IndividualOrder
+const matchStateToProps = ( state ) => {
+    return {
+        Orders: state.restaurantordersReducer.Orders,
+        updatedStatus: state.restaurantordersReducer.updatedStatus,
+    }
+
+}
+
+const matchDispatchToProps = ( dispatch ) => {
+    return {
+        restaurantUpdateOrderAction: ( updatedStatus, orderID ) => dispatch( restaurantUpdateOrderAction( updatedStatus, orderID ) ),
+    }
+}
+
+export default connect( matchStateToProps, matchDispatchToProps )( IndividualOrder )
+

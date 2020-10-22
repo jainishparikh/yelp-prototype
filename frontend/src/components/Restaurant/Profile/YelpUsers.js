@@ -7,6 +7,8 @@ import axios from 'axios';
 import BACKEND_URL from '../../../config/config';
 import '../../../css/pagination.css';
 import profile_picture from '../../../images/profile.png'
+import userGetAllAction from '../../../actions/userGetAllAction'
+import { connect } from "react-redux";
 
 
 export class YelpUsers extends Component {
@@ -18,32 +20,35 @@ export class YelpUsers extends Component {
             offset: 0,
             perPage: 5,
             pageCount: 0,
-            filterBy: "following",
             filterValue: "All",
+            following: []
         }
     }
 
     componentDidMount () {
-        axios.defaults.headers.common[ "authorization" ] = cookie.load( 'token' )
-        axios.defaults.withCredentials = true;
+        this.props.userGetAllAction( this.state.perPage ).then( response => {
 
-        axios.get( BACKEND_URL + '/users/all' ).then( ( response ) => {
-            if ( response.status === 200 ) {
-                this.setState( {
-                    Users: response.data,
-                    pageCount: Math.ceil( response.data.length / this.state.perPage )
-                } )
-                console.log( this.state )
+        } )
+        // axios.defaults.headers.common[ "authorization" ] = cookie.load( 'token' )
+        // axios.defaults.withCredentials = true;
 
-            }
+        // axios.get( BACKEND_URL + '/users/all' ).then( ( response ) => {
+        //     if ( response.status === 200 ) {
+        //         this.setState( {
+        //             Users: response.data,
+        //             pageCount: Math.ceil( response.data.length / this.state.perPage )
+        //         } )
+        //         console.log( this.state )
 
-        } ).catch( ( err ) => {
-            console.log( " error getting users", err )
-            this.setState( {
-                error: true
-            } )
+        //     }
 
-        } );
+        // } ).catch( ( err ) => {
+        //     console.log( " error getting users", err )
+        //     this.setState( {
+        //         error: true
+        //     } )
+
+        // } );
     }
 
     handlePageClick = ( e ) => {
@@ -76,11 +81,11 @@ export class YelpUsers extends Component {
         )
     }
 
-    handleFilterChange = ( e ) => {
-        this.setState( {
-            filterBy: e.target.value
-        } )
-    }
+    // handleFilterChange = ( e ) => {
+    //     this.setState( {
+    //         filterBy: e.target.value
+    //     } )
+    // }
 
     handleradioChange = ( e ) => {
         this.setState( {
@@ -90,60 +95,64 @@ export class YelpUsers extends Component {
 
     render () {
         let redirectVar = null
-        let pageCount = this.state.pageCount
+        let pageCount = this.props.pageCount
         if ( !( cookie.load( "auth" ) && cookie.load( "type" ) === "users" ) ) {
             redirectVar = <Redirect to="/login" />
         }
 
         //display filters
         let displayFilteres = null;
-        if ( this.state.filterBy === "location" ) {
-            displayFilteres =
-                <ul style={ { "list-style-type": "none", "padding": "0px" } }>
-                    <li> Filters :  <select defaultValue="following" onChange={ this.handleFilterChange } name="status" id="order">
-                        <option value="following">Following</option>
-                        <option value="location">Location</option>
-                    </select>
+        // if ( this.state.filterBy === "location" ) {
+        //     displayFilteres =
+        //         <ul style={ { "list-style-type": "none", "padding": "0px" } }>
+        //             <li> Filters :  <select defaultValue="following" onChange={ this.handleFilterChange } name="status" id="order">
+        //                 <option value="following">Following</option>
+        //                 <option value="location">Location</option>
+        //             </select>
 
-                    </li>
+        //             </li>
 
-                    <li><input type="radio" name="filter" value="All" onChange={ this.handleradioChange } /> All</li>
-                    <li> <input type="radio" name="filter" value="San Jose" onChange={ this.handleradioChange } /> San Jose</li>
-                    <li>  <input type="radio" name="filter" value="San Fransisco" onChange={ this.handleradioChange } /> San Fransisco</li>
+        //             <li><input type="radio" name="filter" value="All" onChange={ this.handleradioChange } /> All</li>
+        //             <li> <input type="radio" name="filter" value="San Jose" onChange={ this.handleradioChange } /> San Jose</li>
+        //             <li>  <input type="radio" name="filter" value="San Fransisco" onChange={ this.handleradioChange } /> San Fransisco</li>
 
-                </ul>
+        //         </ul>
 
-        } else if ( this.state.filterBy === "following" ) {
-            displayFilteres =
-                <ul style={ { "list-style-type": "none", "padding": "0px" } }>
-                    <li> Filters : <select defaultValue="following" onChange={ this.handleFilterChange } name="status" id="order">
-                        <option value="following">Following</option>
-                        <option value="location">Location</option></select>
+        // } else if ( this.state.filterBy === "following" ) {
+        displayFilteres =
+            <ul style={ { "list-style-type": "none", "padding": "0px" } }>
+                {/* <li> Filters : <select defaultValue="following" onChange={ this.handleFilterChange } name="status" id="order">
+                    <option value="following">Following</option>
+                    <option value="location">Location</option></select>
 
-                    </li>
-                    <li><input type="radio" name="filter" value="All" onChange={ this.handleradioChange } /> All</li>
-                    <li> <input type="radio" name="filter" value="Following" onChange={ this.handleradioChange } /> Following</li>
-                    <li>  <input type="radio" name="filter" value="Not Following" onChange={ this.handleradioChange } /> Not Following</li>
+                </li> */}
+                <li><input type="radio" name="filter" value="All" onChange={ this.handleradioChange } /> All</li>
+                <li> <input type="radio" name="filter" value="Following" onChange={ this.handleradioChange } /> Following</li>
+                <li>  <input type="radio" name="filter" value="Not Following" onChange={ this.handleradioChange } /> Not Following</li>
 
-                </ul>
+            </ul>
 
-        }
+        // }
 
         //search users
-        let searchedUsers = this.state.Users.filter( ( user ) => user.name.toLowerCase().includes( this.state.searchInput.toLowerCase() ) || user.nickName.toLowerCase().includes( this.state.searchInput.toLowerCase() ) )
+        let searchedUsers = this.props.Users.filter( ( user ) => user.name.toLowerCase().includes( this.state.searchInput.toLowerCase() ) || user.nickName.toLowerCase().includes( this.state.searchInput.toLowerCase() ) || user.city.toLowerCase().includes( this.state.searchInput.toLowerCase() ) || user.state.toLowerCase().includes( this.state.searchInput.toLowerCase() ) || user.country.toLowerCase().includes( this.state.searchInput.toLowerCase() ) )
         pageCount = Math.ceil( searchedUsers.length / this.state.perPage )
 
         //filtered users
-        let filteredOrders = searchedUsers.filter( user => {
+        let filteredUsers = searchedUsers.filter( user => {
             if ( this.state.filterValue === "All" ) {
                 return true
             } else {
-
+                if ( this.state.filterValue === "Following" ) {
+                    return this.props.following.includes( user._id )
+                } else {
+                    return !this.props.following.includes( user._id )
+                }
             }
 
         } )
         //display users
-        let displayUsers = searchedUsers.slice( this.state.offset, this.state.offset + this.state.perPage ).map( user => {
+        let displayUsers = filteredUsers.slice( this.state.offset, this.state.offset + this.state.perPage ).map( user => {
             return (
                 <div className="row  m-2" style={ { "width": "100%", "height": "200px", "background": "whitesmoke", "box-shadow": "0px 0px 10px gray" } }>
                     <div className="col-4" style={ { "padding": "0px" } }>
@@ -186,7 +195,7 @@ export class YelpUsers extends Component {
                         <div className="col-2 m-2"></div>
                         <div className="col-1"><h2>Yelpers</h2></div>
                         <div className="col-6 m-2">
-                            <input type="text" style={ { "width": "700px", "height": "30px", "border": "1px solid gray", "box-shadow": "0px 0px 10px gray" } } name="searchInput" onChange={ this.handleSearch } placeholder="     Search Users"></input>
+                            <input type="text" style={ { "width": "700px", "height": "30px", "border": "1px solid gray", "box-shadow": "0px 0px 10px gray" } } name="searchInput" onChange={ this.handleSearch } placeholder="     Search Users by Name NickName or Location"></input>
                         </div>
 
 
@@ -227,4 +236,21 @@ export class YelpUsers extends Component {
     }
 }
 
-export default YelpUsers
+
+const matchStateToProps = ( state ) => {
+    return {
+        Users: state.usersReducer.Users,
+        pageCount: state.usersReducer.pageCount,
+        following: state.usersReducer.following,
+    }
+
+}
+
+const matchDispatchToProps = ( dispatch ) => {
+    return {
+        userGetAllAction: ( perPage ) => dispatch( userGetAllAction( perPage ) ),
+    }
+}
+
+export default connect( matchStateToProps, matchDispatchToProps )( YelpUsers )
+

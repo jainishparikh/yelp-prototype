@@ -177,4 +177,21 @@ router.post( '/uploadpicture', checkAuth, ( req, res ) => {
     } );
 } );
 
+//follow user
+router.post( '/follow', checkAuth, ( req, res ) => {
+
+    console.log( "follow", req.body )
+    userSchema.findByIdAndUpdate( { _id: req.body.userID }
+        , { $push: { followedBy: req.body.restaurantID } }, { new: true }
+    ).then( doc => {
+        console.log( "Restaurant Added", doc )
+        res.status( 200 ).send( doc );
+    } ).catch( error => {
+        console.log( "error", error );
+        res.status( 400 ).send( "Error following" );
+    } )
+
+
+} )
+
 module.exports = router;

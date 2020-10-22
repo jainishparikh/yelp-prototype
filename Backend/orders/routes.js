@@ -75,7 +75,7 @@ router.post( '/users/placeOrder', checkAuth, ( req, res ) => {
 router.put( '/restaurants/update/:id', checkAuth, ( req, res ) => {
 
 
-    orderSchema.findOneAndUpdate( { _id: req.params.id }, { $set: { orderStatus: req.body.orderStatus } } ).then( response => {
+    orderSchema.findOneAndUpdate( { _id: req.params.id }, { $set: { orderStatus: req.body.orderStatus } }, { new: true } ).then( response => {
         console.log( "Update success", response )
         res.status( 200 ).send( response )
     } ).catch( error => {

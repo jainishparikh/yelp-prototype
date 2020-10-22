@@ -31,6 +31,7 @@ export class UserProfile extends Component {
     }
 
     componentDidMount () {
+        let restaurantID = cookie.load( 'id' )
         let email = this.props.match.params.userEmail
         axios.defaults.headers.common[ "authorization" ] = cookie.load( 'token' )
         axios.defaults.withCredentials = true;
@@ -41,6 +42,15 @@ export class UserProfile extends Component {
                 if ( response.data.profilePicture === null ) {
                     console.log( "inside imagepath null" )
                     imagePath = profile_picture
+                }
+                let length = response.data.followedBy.length
+                for ( let i = 0; i < length; i++ ) {
+                    if ( response.data.followedBy[ i ] === restaurantID ) {
+                        this.setState( {
+                            following: true
+                        } )
+                        break;
+                    }
                 }
                 this.setState( {
                     userID: response.data._id,
@@ -82,7 +92,7 @@ export class UserProfile extends Component {
             restaurantID: cookie.load( 'id' ),
             userID: this.state.userID
         }
-        axios.post( BACKEND_URL + '/restaurants/follow/', data ).then( response => {
+        axios.post( BACKEND_URL + '/users/follow/', data ).then( response => {
             if ( response.status === 200 ) {
                 this.setState( {
                     following: true
