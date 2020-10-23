@@ -209,29 +209,29 @@ export class AddDishes extends Component {
 
                         </div>
                         <div className="row mt-2">
-                            <div className="col-3">
+                            <div className="col-5">
                                 Dish Name: <input type="text" className="form-control" name="dishName"
                                     placeholder={ this.state.dishName } onChange={ this.handleInputChange } />
                             </div>
-                            <div className="col-3">
+                            <div className="col-5">
                                 Dish Price: <input type="text" className="form-control" name="dishPrice"
                                     placeholder={ this.state.dishPrice } onChange={ this.handleInputChange } />
                             </div>
                         </div>
                         <div className="row">
-                            <div className="col-6">
+                            <div className="col-10">
                                 Category:<input type="text" className="form-control" name="dishCategory"
                                     placeholder={ this.state.dishCategory } onChange={ this.handleInputChange } />
                             </div>
                         </div>
                         <div className="row">
-                            <div className="col-6">
+                            <div className="col-10">
                                 Description: <input type="text" className="form-control" name="dishDescription"
                                     placeholder={ this.state.dishDescription } onChange={ this.handleInputChange } />
                             </div>
                         </div>
                         <div className="row">
-                            <div className="col-6">
+                            <div className="col-10">
                                 Ingrediants: <input type="text" className="form-control" name="dishIngrediants"
                                     placeholder={ this.state.dishIngrediants } onChange={ this.handleInputChange } />
                             </div>

@@ -1,6 +1,21 @@
 const mongoose = require( 'mongoose' )
 var Schema = mongoose.Schema;
 
+var individialMessageSchema = new Schema( {
+    name: String,
+    message: String
+} )
+
+
+var messageSchema = new Schema( {
+    userID: String,
+    restaurantID: String,
+    restaurantName: String,
+    userName: String,
+    conversations: [ individialMessageSchema ]
+} )
+
+
 var userSchema = new Schema( {
     name: String,
     email: { type: String, unique: true },
@@ -16,7 +31,8 @@ var userSchema = new Schema( {
     thingsILove: String,
     blogLink: String,
     profilePicture: String,
-    followedBy: [ String ]
+    followedBy: [ String ],
+    messages: [ messageSchema ],
 
 }
     , { collection: 'users' }

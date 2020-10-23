@@ -72,34 +72,34 @@ export class PostEvent extends Component {
 
                         </div>
                         <div className="row mt-2">
-                            <div className="col-3">
+                            <div className="col-5">
                                 Name: <input type="text" className="form-control" name="eventName" required autoFocus
                                     placeholder={ this.state.eventName } onChange={ this.handleInputChange } />
                             </div>
-                            <div className="col-3">
+                            <div className="col-5">
                                 Hashtags: <input type="text" className="form-control" name="hashtags" required
                                     placeholder={ this.state.Hashtags } onChange={ this.handleInputChange } />
                             </div>
 
                         </div>
                         <div className="row">
-                            <div className="col-3">
+                            <div className="col-5">
                                 Time:<input type="text" className="form-control" name="eventTime" required
                                     placeholder={ this.state.eventTime } onChange={ this.handleInputChange } />
                             </div>
-                            <div className="col-3">
+                            <div className="col-5">
                                 Date:<input type="date" className="form-control" name="eventDate" required
                                     placeholder={ this.state.eventDate } onChange={ this.handleInputChange } />
                             </div>
                         </div>
                         <div className="row">
-                            <div className="col-6">
+                            <div className="col-10">
                                 Location: <input type="text" className="form-control" name="eventLocation" required
                                     placeholder={ this.state.eventLocation } onChange={ this.handleInputChange } />
                             </div>
                         </div>
                         <div className="row">
-                            <div className="col-6">
+                            <div className="col-10">
                                 Description: <input type="text" className="form-control" name="eventDescription" required
                                     placeholder={ this.state.eventDescription } onChange={ this.handleInputChange } />
                             </div>

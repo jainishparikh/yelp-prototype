@@ -194,4 +194,26 @@ router.post( '/follow', checkAuth, ( req, res ) => {
 
 } )
 
+
+//reply to message
+router.put( '/message', checkAuth, ( req, res ) => {
+
+    var messageData = {
+        name: req.body.userName,
+        message: req.body.messageString
+    }
+
+    userSchema.findOneAndUpdate( { _id: req.body.userID, "messages.restaurantID": req.body.restaurantID }
+        , { $push: { "messages.$.conversations": messageData } }, { new: true }
+    ).then( doc => {
+        console.log( "Reply Added", doc )
+        res.status( 200 ).send( doc );
+    } ).catch( error => {
+        console.log( "error", error );
+        res.status( 400 ).send( "Error in replying" );
+    } )
+
+
+} )
+
 module.exports = router;

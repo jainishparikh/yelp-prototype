@@ -8,6 +8,7 @@ import BACKEND_URL from '../../../config/config';
 import GetReviews from '../Reviews/GetReviews';
 import getUserProfileAction from '../../../actions/getUserProfileAction'
 import { connect } from "react-redux";
+import Messages from './Messages';
 
 export class UserAbout extends Component {
     constructor( props ) {
@@ -77,8 +78,21 @@ export class UserAbout extends Component {
 
     render () {
         var redirectVar = null;
+        var displayMessages = null
         if ( !( cookie.load( "auth" ) && cookie.load( "type" ) === "users" ) ) {
             redirectVar = <Redirect to="/login" />
+        }
+        // console.log( "messages,", this.props.user.messages )
+        if ( this.props.user.messages !== undefined ) {
+            displayMessages = this.props.user.messages.map( message => {
+                console.log( "in message" )
+                return (
+                    <div>
+                        <h4>{ message.restaurantName }</h4>
+                        <Messages messages={ message } />
+                    </div>
+                )
+            } )
         }
 
         return (
@@ -141,8 +155,13 @@ export class UserAbout extends Component {
                                 </Link>
                             </div>
                             {/* reviews */ }
-                            <div className="col-8" style={ { "padding": "0 15px", "border-left": "1px solid #e6e6e6" } }>
+                            <div className="col-6" style={ { "padding": "0 15px", "border-left": "1px solid #e6e6e6" } }>
                                 <GetReviews reviewData={ this.state } />
+
+                            </div>
+                            <div className="col-3" style={ { "padding": "0 15px", "border-left": "1px solid #e6e6e6" } }>
+                                <h2>Conversations</h2>
+                                { displayMessages }
 
                             </div>
 

@@ -3,6 +3,7 @@ var bcrypt = require( 'bcrypt' );
 var router = express.Router();
 var mongoose = require( '../config/db_config' );
 var restaurantsSchema = require( '../models/restaurants' );
+var userSchema = require( '../models/users' );
 var nodeGeocoder = require( 'node-geocoder' );
 var jwt = require( 'jsonwebtoken' );
 var { secret } = require( '../config/config' )
@@ -300,6 +301,60 @@ router.put( '/dishes/withimage', ( req, res ) => {
     } )
 } );
 
+
+//reply to message
+router.put( '/message', ( req, res ) => {
+
+    var messageData = {
+        name: req.body.restaurantName,
+        message: req.body.messageString
+    }
+
+
+    userSchema.findOne( { _id: req.body.userID, "messages.restaurantID": req.body.restaurantID } ).then( doc => {
+        if ( doc ) {
+            userSchema.findOneAndUpdate( { _id: req.body.userID, "messages.restaurantID": req.body.restaurantID }
+                , { $push: { "messages.$.conversations": messageData } }, { new: true }
+            ).then( doc => {
+                console.log( "Reply Added", doc )
+                res.status( 200 ).send( doc );
+            } ).catch( error => {
+                console.log( "error", error );
+                res.status( 400 ).send( "Error in replying" );
+            } )
+
+
+
+        } else {
+
+            var data = {
+                userID: req.body.userID,
+                restaurantID: req.body.restaurantID,
+                restaurantName: req.body.restaurantName,
+                userName: req.body.userName,
+                conversations: [ messageData ]
+            }
+            console.log( "in else", data )
+            userSchema.findByIdAndUpdate( { _id: req.body.userID },
+                { $set: { messages: [ data ] } }, { new: true } ).then( doc => {
+                    console.log( "Started Conversation", doc )
+                    res.status( 200 ).send( doc );
+                } ).catch( err => {
+                    console.log( "error", err );
+                    res.status( 400 ).send( "Error Starting convo" );
+
+                } )
+
+
+        }
+
+
+    } ).catch( err => {
+        console.log( "error", err );
+        res.status( 400 ).send( "Error" );
+    } )
+
+} )
 
 
 

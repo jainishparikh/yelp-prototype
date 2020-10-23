@@ -151,7 +151,7 @@ export class RestaurantAbout extends Component {
                                             <tr>{ this.props.restaurant.description }</tr>
                                         </div>
                                         <div className="rstaurant-contact" style={ { height: "40%" } }>
-                                            <tr><h5>Contact Detals:</h5></tr>
+                                            <tr><h5>Contact Details:</h5></tr>
                                             <tr>{ this.props.restaurant.contact }</tr>
                                             <tr>{ this.props.restaurant.email }</tr>
                                             <tr>{ this.props.restaurant.timing }</tr>
@@ -198,18 +198,14 @@ export class RestaurantAbout extends Component {
                                         backgroundColor: 'rgba(255, 255, 255, 0.25)'
                                     },
                                     content: {
-                                        position: 'relative',
-                                        top: '20%',
-                                        left: '20%',
-                                        right: '20%',
-                                        bottom: '20%',
-                                        border: '2px solid #ccc',
-                                        background: '#fff',
-                                        overflow: 'auto',
-                                        WebkitOverflowScrolling: 'touch',
-                                        borderRadius: '4px',
-                                        outline: 'none',
-                                        padding: '20px'
+                                        top: '50%',
+                                        left: '50%',
+                                        right: '50%',
+                                        bottom: '50%',
+                                        marginRight: '-50%',
+                                        transform: 'translate(-50%, -50%)',
+                                        height: '500px', // <-- This sets the height
+                                        overlfow: 'scroll' // <-- This tells the modal to scrol
                                     }
                                 } } >
                                     <AddDish call="add" closePopUp={ this.toggleDishPopUp } />
