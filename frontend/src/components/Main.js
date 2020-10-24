@@ -18,8 +18,10 @@ import EditRestaurantProfile from "./Restaurant/Profile/Profile";
 import RestaurantReviews from "./Restaurant/Reviews/Reviews";
 import RestaurantEvents from "./Restaurant/Events/Events";
 import UserProfiles from "./Restaurant/Profile/UserProfile"
+import UserProfilesUSE from "./Users/Profile/UserProfiles"
 import RestaurantOrders from './Restaurant/Orders/Orders';
-import YelpUsers from './Restaurant/Profile/YelpUsers';
+import YelpUsersRES from './Restaurant/Profile/YelpUsers';
+import YelpUsersUSE from './Users/Profile/YelpUsers';
 
 export class Main extends Component {
     render () {
@@ -36,6 +38,7 @@ export class Main extends Component {
                 <Route path='/users/editprofile' component={ EditUserProfile } />
                 <Route path='/users/events' component={ UserEvents } />
                 <Route path='/users/restaurantprofiles/:restaurantEmail/:restaurantID' component={ RestaurantProfile } />
+                <Route path='/users/userprofiles/:userEmail/:userID' component={ UserProfilesUSE } />
                 <Route path='/users/orders' component={ UserOrders } />
 
                 <Route path='/restaurants/about' component={ RestaurantAbout } />
@@ -44,7 +47,9 @@ export class Main extends Component {
                 <Route path='/restaurants/events' component={ RestaurantEvents } />
                 <Route path='/restaurants/userprofiles/:userEmail/:userID' component={ UserProfiles } />
                 <Route path='/restaurants/orders' component={ RestaurantOrders } />
-                <Route path='/restaurants/yelpusers' component={ YelpUsers } />
+                <Route path='/restaurants/yelpusers' component={ YelpUsersRES } />
+                <Route path='/users/yelpusers' component={ YelpUsersUSE } />
+
 
             </div>
         )

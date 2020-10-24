@@ -182,9 +182,9 @@ router.post( '/follow', checkAuth, ( req, res ) => {
 
     console.log( "follow", req.body )
     userSchema.findByIdAndUpdate( { _id: req.body.userID }
-        , { $push: { followedBy: req.body.restaurantID } }, { new: true }
+        , { $push: { followedBy: req.body.followerID } }, { new: true }
     ).then( doc => {
-        console.log( "Restaurant Added", doc )
+        console.log( "User Added", doc )
         res.status( 200 ).send( doc );
     } ).catch( error => {
         console.log( "error", error );

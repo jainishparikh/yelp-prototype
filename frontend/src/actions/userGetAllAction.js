@@ -7,13 +7,13 @@ import cookie from "react-cookies";
 const USER_FETCH_ALL_SUCCESS = "user_fetch_all_success";
 const USER_FETCH_ALL_FAILED = "user_fetch_all_failed";
 
-var success = ( response, pageCount, restaurantID ) => {
+var success = ( response, pageCount, followerID ) => {
     return {
         type: USER_FETCH_ALL_SUCCESS,
         payload: {
             response: response,
             pageCount: pageCount,
-            restaurantID: restaurantID,
+            followerID: followerID,
         }
     }
 }
@@ -32,12 +32,12 @@ var error = ( err ) => {
 var userGetAllAction = ( perPage ) => ( dispatch ) => {
     axios.defaults.headers.common[ "authorization" ] = cookie.load( 'token' )
     axios.defaults.withCredentials = true;
-    let restaurantID = cookie.load( 'id' )
+    let followerID = cookie.load( 'id' )
     return axios.get( BACKEND_URL + '/users/all' ).then( ( response ) => {
         if ( response.status === 200 ) {
 
             let pageCount = Math.ceil( response.data.length / perPage )
-            dispatch( success( response, pageCount, restaurantID ) )
+            dispatch( success( response, pageCount, followerID ) )
         }
 
     } ).catch( ( err ) => {

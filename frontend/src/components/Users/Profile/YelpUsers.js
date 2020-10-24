@@ -96,7 +96,7 @@ export class YelpUsers extends Component {
     render () {
         let redirectVar = null
         let pageCount = this.props.pageCount
-        if ( !( cookie.load( "auth" ) && cookie.load( "type" ) === "restaurants" ) ) {
+        if ( !( cookie.load( "auth" ) && cookie.load( "type" ) === "users" ) ) {
             redirectVar = <Redirect to="/login" />
         }
 
@@ -172,7 +172,7 @@ export class YelpUsers extends Component {
 
                     <div className="col-2" style={ { "padding": "5px" } }>
                         <div className="row">
-                            <Link className="btn btn-primary" to={ `/restaurants/userprofiles/${ user.email }/${ user._id }` } >
+                            <Link className="btn btn-primary" to={ `/users/userprofiles/${ user.email }/${ user._id }` } >
                                 View Profile
                     </Link>
                         </div>
@@ -239,9 +239,9 @@ export class YelpUsers extends Component {
 
 const matchStateToProps = ( state ) => {
     return {
-        Users: state.usersReducer.Users,
-        pageCount: state.usersReducer.pageCount,
-        following: state.usersReducer.following,
+        Users: state.usersReducerUSER.Users,
+        pageCount: state.usersReducerUSER.pageCount,
+        following: state.usersReducerUSER.following,
     }
 
 }

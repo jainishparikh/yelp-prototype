@@ -9,7 +9,6 @@ import GetReviews from '../Reviews/GetReviews';
 import userProfileGetAction from '../../../actions/userProfileGetAction';
 import userFollowAction from '../../../actions/userFollowActions';
 import { connect } from "react-redux";
-import Messages from './Message';
 
 export class UserProfile extends Component {
     constructor( props ) {
@@ -111,41 +110,41 @@ export class UserProfile extends Component {
 
     render () {
         var redirectVar = null;
-        if ( !( cookie.load( "auth" ) && cookie.load( "type" ) === "restaurants" ) ) {
-            redirectVar = <Redirect to="/login" />
-        }
-        // var displayFollow = null;
-        // if ( this.props.following ) {
-        //     displayFollow = <button className="btn btn-danger">Already Following</button>
-        // } else {
-        //     displayFollow = <button className="btn btn-danger" onClick={ this.followUser }>Follow</button>
+        // if ( !( cookie.load( "auth" ) && cookie.load( "type" ) === "users" ) ) {
+        //     redirectVar = <Redirect to="/login" />
         // }
-
-        var displayMessages = null
-        console.log( "this.props.messages", this.props.messages, this.props.user )
-        if ( Object.keys( this.props.messages ).length === 0 && this.props.messages.constructor === Object ) {
-            console.log( "in empty" )
-            let messageData = {
-                restaurantID: cookie.load( 'id' ),
-                userID: this.props.user._id,
-                userName: this.props.user.name,
-                restaurantName: cookie.load( 'name' ),
-                conversations: []
-            }
-            console.log( "messageData", messageData )
-            displayMessages = <div>
-                <Messages messages={ messageData } />
-            </div>
-
+        var displayFollow = null;
+        if ( this.props.following ) {
+            displayFollow = <button className="btn btn-danger">Already Following</button>
         } else {
-
-            displayMessages =
-                <div>
-                    <Messages messages={ this.props.messages } />
-                </div>
-
-
+            displayFollow = <button className="btn btn-danger" onClick={ this.followUser }>Follow</button>
         }
+
+        // var displayMessages = null
+        // console.log( "this.props.messages", this.props.messages, this.props.user )
+        // if ( Object.keys( this.props.messages ).length === 0 && this.props.messages.constructor === Object ) {
+        //     console.log( "in empty" )
+        //     let messageData = {
+        //         restaurantID: cookie.load( 'id' ),
+        //         userID: this.props.user._id,
+        //         userName: this.props.user.name,
+        //         restaurantName: cookie.load( 'name' ),
+        //         conversations: []
+        //     }
+        //     console.log( "messageData", messageData )
+        //     displayMessages = <div>
+        //         <Messages messages={ messageData } />
+        //     </div>
+
+        // } else {
+
+        //     displayMessages =
+        //         <div>
+        //             <Messages messages={ this.props.messages } />
+        //         </div>
+
+
+        // }
         let displayReviews = <div className="col-8" style={ { "padding": "0 15px", "border-left": "1px solid #e6e6e6" } }>
             <GetReviews userID={ this.props.match.params.userID } />
 
@@ -208,10 +207,9 @@ export class UserProfile extends Component {
                         <div className="row">
                             <div className="col-2">
                                 <div className="row">
-                                    {/* { displayFollow } */ }
+                                    { displayFollow }
                                 </div>
-                                <div className="row">
-                                    { displayMessages }</div>
+
 
                             </div>
                             { displayReviews }

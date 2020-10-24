@@ -32,7 +32,7 @@ var userFollowAction = ( userID ) => ( dispatch ) => {
     axios.defaults.headers.common[ "authorization" ] = cookie.load( 'token' )
     axios.defaults.withCredentials = true;
     let data = {
-        restaurantID: cookie.load( 'id' ),
+        followerID: cookie.load( 'id' ),
         userID: userID
     }
     axios.post( BACKEND_URL + '/users/follow/', data ).then( response => {
