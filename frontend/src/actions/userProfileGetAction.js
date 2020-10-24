@@ -7,13 +7,14 @@ import profile_picture from '../images/profile.png';
 const USER_FETCH_SUCCESS = "user_fetch_success";
 const USER_FETCH_FAILED = "user_fetch_failed";
 
-var success = ( response, imagePath, following ) => {
+var success = ( response, imagePath, following, restaurantID ) => {
     return {
         type: USER_FETCH_SUCCESS,
         payload: {
             response: response,
             imagePath: imagePath,
-            following: following
+            following: following,
+            restaurantID: restaurantID
         }
     }
 }
@@ -51,7 +52,7 @@ var getUserProfileAction = ( email ) => ( dispatch ) => {
                     break;
                 }
             }
-            dispatch( success( response, imagePath, following ) )
+            dispatch( success( response, imagePath, following, restaurantID ) )
         }
     } ).catch( err => {
 

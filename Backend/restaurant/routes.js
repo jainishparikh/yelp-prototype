@@ -336,7 +336,7 @@ router.put( '/message', ( req, res ) => {
             }
             console.log( "in else", data )
             userSchema.findByIdAndUpdate( { _id: req.body.userID },
-                { $set: { messages: [ data ] } }, { new: true } ).then( doc => {
+                { $push: { messages: [ data ] } }, { new: true } ).then( doc => {
                     console.log( "Started Conversation", doc )
                     res.status( 200 ).send( doc );
                 } ).catch( err => {
