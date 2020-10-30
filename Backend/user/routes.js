@@ -4,75 +4,102 @@ var router = express.Router();
 var mongoose = require( '../config/db_config' );
 var userSchema = require( '../models/users' );
 var jwt = require( 'jsonwebtoken' );
-var { secret } = require( '../config/config' )
+var { secret } = require( '../config/config' );
+var kafka = require( '../kafka/client' );
 var { auth, checkAuth } = require( '../config/passport' )
 auth();
 
 //signup
 router.post( '/signup', ( req, res ) => {
 
-    bcrypt.hash( req.body.password, 10, ( err, hash ) => {
+    kafka.make_request( 'user_signup', req.body, function ( err, results ) {
+        if ( err ) {
+            console.log( "Inside err", err );
+            res.status( 400 ).send( err )
+        } else {
+            console.log( "Inside else", results );
+            res.status( 200 ).send( results )
 
-        let user = new userSchema( {
-            name: req.body.name,
-            email: req.body.email,
-            password: hash,
-            nickName: "",
-            contactNumber: "",
-            dateOfBirth: "",
-            city: "",
-            state: "",
-            country: "",
-            headline: "",
-            yelpingSince: "",
-            thingsILove: "",
-            blogLink: "",
-            profilePicture: ""
-
-
-        } )
-
-        user.save().then( response => {
-            console.log( "Signup successfull" )
-            res.status( 200 ).send( response._id )
-        } ).catch( error => {
-            console.log( "Error", error )
-            res.status( 400 ).send( error )
-        } )
-
+        }
 
     } );
+    // bcrypt.hash( req.body.password, 10, ( err, hash ) => {
+
+    //     let user = new userSchema( {
+    //         name: req.body.name,
+    //         email: req.body.email,
+    //         password: hash,
+    //         nickName: "",
+    //         contactNumber: "",
+    //         dateOfBirth: "",
+    //         city: "",
+    //         state: "",
+    //         country: "",
+    //         headline: "",
+    //         yelpingSince: "",
+    //         thingsILove: "",
+    //         blogLink: "",
+    //         profilePicture: ""
+
+
+    //     } )
+
+    //     user.save().then( response => {
+    //         console.log( "Signup successfull" )
+    //         res.status( 200 ).send( response._id )
+    //     } ).catch( error => {
+    //         console.log( "Error", error )
+    //         res.status( 400 ).send( error )
+    //     } )
+
+
+    // } );
 
 
 } )
 
 //login
 router.post( '/login', ( req, res ) => {
+    console.log( "in user login" )
+    kafka.make_request( 'user_login', req.body, function ( err, results ) {
+        console.log( 'in user_login results' );
 
-    userSchema.findOne( { email: req.body.email } ).then( doc => {
-
-        if ( bcrypt.compareSync( req.body.password, doc.password ) ) {
-            let payload = {
-                _id: doc._id,
-                type: "users",
-                email: doc.email,
-                name: doc.name
-            }
-
-            let token = jwt.sign( payload, secret, {
-                expiresIn: 1008000
-            } )
-            console.log( "Login Successfull", token )
-            res.status( 200 ).send( "Bearer " + token )
+        if ( err ) {
+            console.log( "Inside err" );
+            res.status( 400 ).send( "Invalid Credentials" )
         } else {
-            console.log( "Invalid Credentials" )
-            res.status( 401 ).send( "Invalid Credentials" )
+            console.log( "Inside else", results );
+            res.status( 200 ).send( results )
+
         }
 
-    } ).catch( error => {
-        console.log( "User Not Found", error )
-        res.status( 400 ).send( "User Not found" )
-    } )
+    } );
+
+
+    // userSchema.findOne( { email: req.body.email } ).then( doc => {
+
+    //     if ( bcrypt.compareSync( req.body.password, doc.password ) ) {
+    //         let payload = {
+    //             _id: doc._id,
+    //             type: "users",
+    //             email: doc.email,
+    //             name: doc.name
+    //         }
+
+    //         let token = jwt.sign( payload, secret, {
+    //             expiresIn: 1008000
+    //         } )
+    //         console.log( "Login Successfull", token )
+    //         res.status( 200 ).send( "Bearer " + token )
+    //     } else {
+    //         console.log( "Invalid Credentials" )
+    //         res.status( 401 ).send( "Invalid Credentials" )
+    //     }
+
+    // } ).catch( error => {
+    //     console.log( "User Not Found", error )
+    //     res.status( 400 ).send( "User Not found" )
+    // } )
 
 } );
 
