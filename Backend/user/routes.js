@@ -23,44 +23,10 @@ router.post( '/signup', ( req, res ) => {
         }
 
     } );
-    // bcrypt.hash( req.body.password, 10, ( err, hash ) => {
-
-    //     let user = new userSchema( {
-    //         name: req.body.name,
-    //         email: req.body.email,
-    //         password: hash,
-    //         nickName: "",
-    //         contactNumber: "",
-    //         dateOfBirth: "",
-    //         city: "",
-    //         state: "",
-    //         country: "",
-    //         headline: "",
-    //         yelpingSince: "",
-    //         thingsILove: "",
-    //         blogLink: "",
-    //         profilePicture: ""
-
-
-    //     } )
-
-    //     user.save().then( response => {
-    //         console.log( "Signup successfull" )
-    //         res.status( 200 ).send( response._id )
-    //     } ).catch( error => {
-    //         console.log( "Error", error )
-    //         res.status( 400 ).send( error )
-    //     } )
-
-
-    // } );
-
-
 } )
 
 //login
 router.post( '/login', ( req, res ) => {
-    console.log( "in user login" )
     kafka.make_request( 'user_login', req.body, function ( err, results ) {
         console.log( 'in user_login results' );
 
@@ -76,109 +42,71 @@ router.post( '/login', ( req, res ) => {
     } );
 
 
-    // userSchema.findOne( { email: req.body.email } ).then( doc => {
-
-    //     if ( bcrypt.compareSync( req.body.password, doc.password ) ) {
-    //         let payload = {
-    //             _id: doc._id,
-    //             type: "users",
-    //             email: doc.email,
-    //             name: doc.name
-    //         }
-
-    //         let token = jwt.sign( payload, secret, {
-    //             expiresIn: 1008000
-    //         } )
-    //         console.log( "Login Successfull", token )
-    //         res.status( 200 ).send( "Bearer " + token )
-    //     } else {
-    //         console.log( "Invalid Credentials" )
-    //         res.status( 401 ).send( "Invalid Credentials" )
-    //     }
-
-    // } ).catch( error => {
-    //     console.log( "User Not Found", error )
-    //     res.status( 400 ).send( "User Not found" )
-    // } )
 
 } );
 
 // get all users
 router.get( '/all', checkAuth, ( req, res ) => {
-    userSchema.find().then( docs => {
+    kafka.make_request( 'user_getall', req.body, function ( err, results ) {
+        if ( err ) {
+            console.log( "Inside err" );
+            res.status( 400 ).send( "Error Fetching users", err )
+        } else {
+            console.log( "Inside else", results );
+            res.status( 200 ).send( JSON.stringify( results ) )
 
-        console.log( "Users", docs )
-        res.status( 200 ).send( JSON.stringify( docs ) )
+        }
 
-
-    } ).catch( error => {
-        console.log( "Error fetching users", error )
-        res.status( 400 ).send( "Error fetching users" )
-    } )
+    } );
 
 } );
 
 //get user about by email
 router.get( '/about/:email', checkAuth, ( req, res ) => {
+    kafka.make_request( 'user_aboutbyEmail', req.params, function ( err, results ) {
+        if ( err ) {
+            console.log( "Inside err" );
+            res.status( 400 ).send( "Error Fetching users", err )
+        } else {
+            console.log( "Inside else", results );
+            res.status( 200 ).send( JSON.stringify( results ) )
 
-    userSchema.findOne( { email: req.params.email } ).then( doc => {
+        }
 
-        console.log( "User", doc )
-        res.status( 200 ).send( JSON.stringify( doc ) )
-
-
-    } ).catch( error => {
-        console.log( "Error fetching user about", error )
-        res.status( 400 ).send( "Error fetching user about" )
-    } )
-
+    } );
 } );
 
 
 //get user about by id
 router.get( '/aboutbyID/:id', checkAuth, ( req, res ) => {
-    userSchema.findOne( { _id: req.params.id } ).then( doc => {
+    kafka.make_request( 'user_aboutbyID', req.params, function ( err, results ) {
+        if ( err ) {
+            console.log( "Inside err" );
+            res.status( 400 ).send( "Error Fetching users", err )
+        } else {
+            console.log( "Inside else", results );
+            res.status( 200 ).send( JSON.stringify( results ) )
 
-        console.log( "User", doc )
-        res.status( 200 ).send( JSON.stringify( doc ) )
+        }
 
-    } ).catch( error => {
-        console.log( "Error fetching user about", error )
-        res.status( 400 ).send( "Error fetching user about" )
-    } )
-
+    } );
 } );
 
 
 
 //update user about
 router.put( '/about', checkAuth, ( req, res ) => {
+    kafka.make_request( 'user_about', req.body, function ( err, results ) {
+        if ( err ) {
+            console.log( "Inside err" );
+            res.status( 400 ).send( "Error Fetching users", err )
+        } else {
+            console.log( "Inside else", results );
+            res.status( 200 ).send( JSON.stringify( results ) )
 
-    userSchema.findOneAndUpdate( { email: req.body.email },
-        {
-            $set: {
-                name: req.body.name,
-                email: req.body.email,
-                nickName: req.body.nickName,
-                contactNumber: req.body.contactNumber,
-                dateOfBirth: req.body.dateOfBirth,
-                city: req.body.city,
-                state: req.body.state,
-                country: req.body.country,
-                headline: req.body.headline,
-                yelpingSince: req.body.yelpingSince,
-                thingsILove: req.body.thingsILove,
-                blogLink: req.body.blogLink
-            }
-        }, { new: true }
-    ).then( response => {
-        console.log( "Update successfull" )
-        res.status( 200 ).send( response )
-    } ).catch( error => {
-        console.log( "Error in update", error )
-        res.status( 400 ).send( error )
-    } )
+        }
 
+    } );
 
 } );
 
@@ -192,13 +120,19 @@ router.post( '/uploadpicture', checkAuth, ( req, res ) => {
             res.status( 400 ).end( 'Issue with uploading' )
         } else {
             console.log( "Inside upload", req.file, req.body );
-            userSchema.findByIdAndUpdate( { _id: req.body.userID },
-                { $set: { profilePicture: req.file.filename } }
-            ).then( response => {
-                res.status( 200 ).send( "Image upload successfull" + response )
-            } ).catch( error => {
-                res.status( 400 ).send( "Image upload unsuccessfull" + error )
-            } )
+            req.body.file = req.file
+            kafka.make_request( 'upload_picture', req.body, function ( err, results ) {
+                if ( err ) {
+                    console.log( "Inside err" );
+                    res.status( 400 ).send( "Error Fetching users", err )
+                } else {
+                    console.log( "Inside else", results );
+                    res.status( 200 ).send( JSON.stringify( results ) )
+
+                }
+
+            } );
+
 
         }
     } );
@@ -208,39 +142,33 @@ router.post( '/uploadpicture', checkAuth, ( req, res ) => {
 router.post( '/follow', checkAuth, ( req, res ) => {
 
     console.log( "follow", req.body )
-    userSchema.findByIdAndUpdate( { _id: req.body.userID }
-        , { $push: { followedBy: req.body.followerID } }, { new: true }
-    ).then( doc => {
-        console.log( "User Added", doc )
-        res.status( 200 ).send( doc );
-    } ).catch( error => {
-        console.log( "error", error );
-        res.status( 400 ).send( "Error following" );
-    } )
+    kafka.make_request( 'user_follow', req.body, function ( err, results ) {
+        if ( err ) {
+            console.log( "Inside err" );
+            res.status( 400 ).send( "Error Fetching users", err )
+        } else {
+            console.log( "Inside else", results );
+            res.status( 200 ).send( JSON.stringify( results ) )
 
+        }
 
+    } );
 } )
 
 
 //reply to message
 router.put( '/message', checkAuth, ( req, res ) => {
+    kafka.make_request( 'user_message', req.body, function ( err, results ) {
+        if ( err ) {
+            console.log( "Inside err" );
+            res.status( 400 ).send( "Error Fetching users", err )
+        } else {
+            console.log( "Inside else", results );
+            res.status( 200 ).send( JSON.stringify( results ) )
 
-    var messageData = {
-        name: req.body.userName,
-        message: req.body.messageString
-    }
+        }
 
-    userSchema.findOneAndUpdate( { _id: req.body.userID, "messages.restaurantID": req.body.restaurantID }
-        , { $push: { "messages.$.conversations": messageData } }, { new: true }
-    ).then( doc => {
-        console.log( "Reply Added", doc )
-        res.status( 200 ).send( doc );
-    } ).catch( error => {
-        console.log( "error", error );
-        res.status( 400 ).send( "Error in replying" );
-    } )
-
-
+    } );
 } )
 
 module.exports = router;
