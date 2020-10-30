@@ -10,7 +10,7 @@ function handle_request ( msg, callback ) {
     userSchema.findOne( { _id: req.params.id } ).then( doc => {
 
         console.log( "User", doc )
-        callback( null, docs )
+        callback( null, doc )
         // res.status( 200 ).send( JSON.stringify( doc ) )
 
     } ).catch( error => {
