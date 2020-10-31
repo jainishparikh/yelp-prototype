@@ -32,7 +32,8 @@ function handle_request ( msg, callback ) {
 
     } ).catch( error => {
         console.log( "User Not Found", error )
-        res.status( 400 ).send( "User Not found" )
+        callback( "Invalid credentials", null )
+
     } )
 
 

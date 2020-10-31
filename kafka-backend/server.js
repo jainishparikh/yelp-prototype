@@ -28,6 +28,27 @@ var dishes_update_wImage = require( './services/restuarants/dishes_update_wImage
 var dishes_update_woImage = require( './services/restuarants/dishes_update_woImage' );
 var restaurant_message = require( './services/restuarants/message' );
 
+//orders
+var order_byRestaurant = require( './services/orders/byRestaurants' );
+var order_byUsers = require( './services/orders/byUsers' );
+var order_placeOrder = require( './services/orders/placeOrder' );
+var order_update = require( './services/orders/updateOrderStatus' );
+var order_cancel = require( './services/orders/cancel' );
+
+//events
+var events_users = require( './services/events/events_users' );
+var events_restaurants = require( './services/events/events_restaurants' );
+var events_getall = require( './services/events/events_getall' );
+var events_registered = require( './services/events/registered' );
+var events_register = require( './services/events/events_register' );
+var events_post = require( './services/events/events_post' );
+
+
+//reviews
+var review_add = require( './services/reviews/add' );
+var review_users = require( './services/reviews/users' );
+var review_restaurants = require( './services/reviews/restaurant' );
+
 
 function handleTopicRequest ( topic_name, fname ) {
     //var topic_name = 'root_topic';
@@ -87,3 +108,23 @@ handleTopicRequest( "dishes_getall", dishes_getall )
 handleTopicRequest( "dishes_update_woImage", dishes_update_woImage )
 handleTopicRequest( "dishes_update_wImage", dishes_update_wImage )
 handleTopicRequest( "restaurant_message", restaurant_message )
+
+//orders
+handleTopicRequest( "order_byRestaurants", order_byRestaurant )
+handleTopicRequest( "order_byUsers", order_byUsers )
+handleTopicRequest( "order_placeOrder", order_placeOrder )
+handleTopicRequest( "order_update", order_update )
+handleTopicRequest( "order_cancel", order_cancel )
+
+//events
+handleTopicRequest( "events_getall", events_getall )
+handleTopicRequest( "events_registered", events_registered )
+handleTopicRequest( "events_register", events_register )
+handleTopicRequest( "events_restaurants", events_restaurants )
+handleTopicRequest( "events_users", events_users )
+handleTopicRequest( "events_post", events_post )
+
+//review
+handleTopicRequest( "review_restaurants", review_restaurants )
+handleTopicRequest( "review_users", review_users )
+handleTopicRequest( "review_add", review_add )

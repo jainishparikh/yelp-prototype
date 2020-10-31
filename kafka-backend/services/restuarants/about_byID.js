@@ -9,7 +9,7 @@ function handle_request ( msg, callback ) {
     restaurantsSchema.findOne( { _id: req.params.id } ).then( doc => {
 
         // console.log( "User", doc )
-        callback( null, docs )
+        callback( null, doc )
 
     } ).catch( error => {
         console.log( "Error fetching restaurant about", error )

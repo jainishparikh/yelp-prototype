@@ -43,7 +43,8 @@ export class AddReview extends Component {
         axios.post( BACKEND_URL + '/reviews/addreview', data ).then( response => {
             if ( response.status === 200 ) {
                 console.log( "review added" );
-                window.location.assign( '/users/restaurantprofiles/' + this.props.reviewData.email + '/' + this.props.reviewData.restaurantID )
+                this.props.closePopUp()
+                // window.location.assign( '/users/restaurantprofiles/' + this.props.reviewData.email + '/' + this.props.reviewData.restaurantID )
             }
         } ).catch( error => {
             console.log( "Erron in posting review: ", error )

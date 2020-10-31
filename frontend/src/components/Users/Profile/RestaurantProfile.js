@@ -34,7 +34,7 @@ export class RestaurantProfile extends Component {
             reviewPopUp: false,
             orderPopUp: false,
             offset: 0,
-            perPage: 2,
+            perPage: 5,
             pageCount: 0
         }
 
