@@ -11,8 +11,11 @@ function handle_request ( msg, callback ) {
     }
 
     restaurantsSchema.findOne( { email: req.body.email } ).then( doc => {
-
-        if ( bcrypt.compareSync( req.body.password, doc.password ) ) {
+	console.log(req.body.password)
+	    console.log(bcrypt.compareSync(req.body.password,doc.password))
+	    
+         if(bcrypt.compareSync( req.body.password, doc.password )) {
+	  
 
             let payload = {
                 _id: doc._id,
@@ -29,6 +32,7 @@ function handle_request ( msg, callback ) {
             console.log( "Invalid Credentials" )
             callback( "Invalid credentials", null )
         }
+ 
 
     } ).catch( error => {
         console.log( "User Not Found", error )

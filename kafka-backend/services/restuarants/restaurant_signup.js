@@ -8,7 +8,7 @@ function handle_request ( msg, callback ) {
     }
 
     bcrypt.hash( req.body.password, 10, ( err, hash ) => {
-        console.log( "result", result )
+//        console.log( "result", result )
         let restaurant = new restaurantsSchema( {
             name: req.body.name,
             email: req.body.email,

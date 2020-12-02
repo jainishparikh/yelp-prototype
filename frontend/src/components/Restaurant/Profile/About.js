@@ -29,7 +29,7 @@ export class RestaurantAbout extends Component {
             profileImagePath: profile_picture,
             dishes: [],
             offset: 0,
-            perPage: 5,
+            perPage: 2,
             currentPage: 1,
             pageCount: 0
         }
@@ -142,22 +142,21 @@ export class RestaurantAbout extends Component {
                     <div className="row h-100">
                         <div className="col-3" style={ { "borderRight": "1px solid #e6e6e6", "background": "whitesmoke" } }>
                             <div className="profile-info" style={ { height: "80%" } }>
-                                <table style={ { height: "100%" } }>
-                                    <tbody>
-                                        <div className="restaurant-info" style={ { height: "60%" } }>
-                                            <tr> <img src={ this.props.profileImagePath } width="102%" height="100%" alt="" /></tr>
-                                            <tr><h2>{ this.props.restaurant.name }</h2></tr>
-                                            <tr>{ this.props.restaurant.location }</tr>
-                                            <tr>{ this.props.restaurant.description }</tr>
-                                        </div>
-                                        <div className="rstaurant-contact" style={ { height: "40%" } }>
-                                            <tr><h5>Contact Details:</h5></tr>
-                                            <tr>{ this.props.restaurant.contact }</tr>
-                                            <tr>{ this.props.restaurant.email }</tr>
-                                            <tr>{ this.props.restaurant.timing }</tr>
-                                        </div>
-                                    </tbody>
-                                </table>
+                                 <ul style={ { "list-style-type": "none" } }>
+                                <li><img src={ this.props.profileImagePath } style={ { "border": "1px solid black" } } width="200px" height="180px" alt="" /></li>
+                                <li><h2>{ this.props.restaurant.name }</h2></li>
+                                <li>{ this.props.restaurant.location }</li>
+                                <li>{ this.props.restaurant.description }</li>
+
+                            </ul>
+
+                            <ul style={ { "list-style-type": "none", "padding-top": '80px' } }>
+                                <li><h5>Contact Details:</h5></li>
+                                <li><b>Mail at:</b> { this.props.restaurant.email }</li>
+                                <li><b>Call at:</b> { this.props.restaurant.contact }</li>
+                                <li><b>We are OPEN:</b> { this.props.restaurant.timing }</li>
+
+                            </ul>
                             </div>
                             <div className="profile-edit" style={ { height: "20%" } }>
                                 <Link className="btn btn-primary" to={ {

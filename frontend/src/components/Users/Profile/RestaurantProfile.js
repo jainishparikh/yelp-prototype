@@ -34,7 +34,7 @@ export class RestaurantProfile extends Component {
             reviewPopUp: false,
             orderPopUp: false,
             offset: 0,
-            perPage: 5,
+            perPage: 2,
             pageCount: 0
         }
 
@@ -48,7 +48,8 @@ export class RestaurantProfile extends Component {
                 imagePath = profile_picture
             }
             if ( restaurant.email === email )
-                this.setState( {
+               console.log("in if",restaurant)
+		this.setState( {
                     restaurantID: restaurant._id,
                     name: restaurant.name,
                     email: restaurant.email,
@@ -151,7 +152,7 @@ export class RestaurantProfile extends Component {
 
         let details = this.state.dishes.slice( this.state.offset, this.state.offset + this.state.perPage ).map( ( dish ) => {
             return (
-                <IndividualDish removeFromOrder={ this.removeFromOrderProfile } addToOrder={ this.addToOrderProfile } dishData={ dish } />
+                <IndividualDish key={dish.dishID} removeFromOrder={ this.removeFromOrderProfile } addToOrder={ this.addToOrderProfile } dishData={ dish } />
             )
         } )
 

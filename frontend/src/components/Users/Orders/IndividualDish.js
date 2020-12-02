@@ -62,17 +62,18 @@ export class IndividualDish extends Component {
 
 
         return (
-            <div>
+
+		<div>
                 <div className="row p-1 m-3" style={ { "width": "100%", "height": "200px", "background": "whitesmoke", "box-shadow": "0px 0px 10px gray" } }>
                     <div className="col-4" style={ { "padding": "0px" } }>
-                        { this.displayPicture( this.state.dishPicture ) }
+                        { this.displayPicture( this.props.dishData.dishPicture ) }
                     </div>
                     <div className='col-6' style={ { "padding": "5px" } }>
-                        <div className='row'><h3>{ this.state.dishName }</h3></div>
-                        <div className='row'><b>Cost: </b>${ this.state.dishPrice }</div>
-                        <div className='row'><b>Category: </b>{ this.state.dishCategory }</div>
-                        <div className='row'><b>Ingrediants: </b>{ this.state.dishIngrediants }</div>
-                        <div className='row'><b>Description: </b>{ this.state.dishDescription }</div>
+                        <div className='row'><h3>{ this.props.dishData.dishName }</h3></div>
+                        <div className='row'><b>Cost: </b>${ this.props.dishData.dishPrice }</div>
+                        <div className='row'><b>Category: </b>{ this.props.dishData.dishCategory }</div>
+                        <div className='row'><b>Ingrediants: </b>{ this.props.dishData.dishIngrediants }</div>
+                        <div className='row'><b>Description: </b>{ this.props.dishData.dishDescription }</div>
                     </div>
                     <div className="col-2">
 
@@ -83,7 +84,31 @@ export class IndividualDish extends Component {
 
 
             </div>
-        )
+		
+		
+//		<div>
+//                <div className="row p-1 m-3" style={ { "width": "100%", "height": "200px", "background": "whitesmoke", "box-shadow": "0px 0px 10px gray" } }>
+//                    <div className="col-4" style={ { "padding": "0px" } }>
+//                        { this.displayPicture( this.state.dishPicture ) }
+ //                   </div>
+//                    <div className='col-6' style={ { "padding": "5px" } }>
+ //                       <div className='row'><h3>{ this.state.dishName }</h3></div>
+  //                      <div className='row'><b>Cost: </b>${ this.state.dishPrice }</div>
+   //                     <div className='row'><b>Category: </b>{ this.state.dishCategory }</div>
+    //                    <div className='row'><b>Ingrediants: </b>{ this.state.dishIngrediants }</div>
+     //                   <div className='row'><b>Description: </b>{ this.state.dishDescription }</div>
+   //                 </div>
+    //                <div className="col-2">
+
+      //                  { dishOption }
+      //              </div>
+
+        //        </div>
+
+
+          //  </div>
+  //
+		)
     }
 }
 
